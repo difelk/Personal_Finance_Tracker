@@ -46,12 +46,15 @@ public class Transaction {
         this.category = category;
         this.dateTime = dateTime.atZone(ZoneId.systemDefault());
         this.isIncome = isIncome;
-
         this.transactionID = generateTransactionID(dateTime, category, isIncome);
     }
 
     private String generateTransactionID(LocalDateTime dateTime, Category category, boolean isIncome) {
         String transactionType = isIncome ? "INC" : "EXP";
         return dateTime + (category != null ? category.getName() : "") + transactionType;
+    }
+
+    public String getTransactionID() {
+        return this.transactionID;
     }
 }
