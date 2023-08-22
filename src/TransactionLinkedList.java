@@ -1,16 +1,17 @@
 public class TransactionLinkedList {
-    Node head;
+    TransactionNode head;
 
 
     public void addTransaction(Transaction data){
-        Node newNode = new Node(data);
+        TransactionNode newTransactionNode = new TransactionNode(data);
 
         if(head == null){
-            this.head = newNode;
-        }else{
-            newNode.setNextRef(this.head);
-            this.head = newNode;
+            this.head = newTransactionNode;
+            return;
         }
+        newTransactionNode.setNextRef(this.head);
+        this.head = newTransactionNode;
+
     }
 
 }
