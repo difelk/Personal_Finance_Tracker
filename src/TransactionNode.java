@@ -1,10 +1,10 @@
-public class Node {
+public class TransactionNode {
 
    private Transaction data;
-    private Node nextRef;
+    private TransactionNode nextRef;
 
 
-    public Node(Transaction data){
+    public TransactionNode(Transaction data){
         this.data = data;
         this.nextRef = null;
     }
@@ -17,11 +17,11 @@ public class Node {
         this.data = data;
     }
 
-    public void setNextRef(Node nextRef){
+    public void setNextRef(TransactionNode nextRef){
         this.nextRef = nextRef;
     }
 
-    public Node getNextRef(){
+    public TransactionNode getNextRef(){
        return this.nextRef;
     }
 
