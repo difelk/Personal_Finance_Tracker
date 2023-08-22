@@ -53,4 +53,8 @@ public class Transaction {
         String transactionType = isIncome ? "INC" : "EXP";
         return dateTime + (category != null ? category.getName() : "") + transactionType;
     }
+
+    public String getTransactionID() {
+        return this.transactionID;
+    }
 }
