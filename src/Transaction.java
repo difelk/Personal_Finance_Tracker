@@ -46,7 +46,6 @@ public class Transaction {
         this.category = category;
         this.dateTime = dateTime.atZone(ZoneId.systemDefault());
         this.isIncome = isIncome;
-
         this.transactionID = generateTransactionID(dateTime, category, isIncome);
     }
 
