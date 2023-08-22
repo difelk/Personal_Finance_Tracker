@@ -5,13 +5,12 @@ public class TransactionLinkedList {
     public void addTransaction(Transaction data){
         TransactionNode newTransactionNode = new TransactionNode(data);
 
-        if(head == null){
+        if(this.head == null){
             this.head = newTransactionNode;
             return;
         }
         newTransactionNode.setNextRef(this.head);
         this.head = newTransactionNode;
-
     }
 
 }
