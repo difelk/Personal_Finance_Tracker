@@ -3,6 +3,9 @@ public class TransactionNode {
    private Transaction data;
     private TransactionNode nextRef;
 
+    public TransactionNode(){
+
+    }
 
     public TransactionNode(Transaction data){
         this.data = data;
