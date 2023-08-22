@@ -9,6 +9,14 @@ public class Node {
         this.nextRef = null;
     }
 
+    public Transaction getData() {
+        return data;
+    }
+
+    public void setData(Transaction data) {
+        this.data = data;
+    }
+
     public void setNextRef(Node nextRef){
         this.nextRef = nextRef;
     }
