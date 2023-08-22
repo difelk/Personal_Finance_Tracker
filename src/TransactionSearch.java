@@ -1,6 +1,8 @@
 public class TransactionSearch {
+
+    TransactionLinkedList transactionLinkedList = new TransactionLinkedList();
     public TransactionNode searchByTransactionId(String transactionId) {
-        return  null;
+       return transactionLinkedList.getTransactionById(transactionId);
     }
 
     public TransactionNode searchByTransactionDate(String date) {
