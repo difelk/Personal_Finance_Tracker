@@ -8,8 +8,8 @@ import java.time.format.DateTimeParseException;
 
 public class ValidationUtils {
 
-    DataManipulationUtils dataManipulationUtils = new DataManipulationUtils();
-    public boolean isDateAFutureDate(String dateTime) {
+    static DataManipulationUtils dataManipulationUtils = new DataManipulationUtils();
+    public static boolean isDateAFutureDate(String dateTime) {
         if(isValidDateTimeFormat(dateTime, "mm/dd/yy 00:00")){
             return  false;
 
@@ -23,7 +23,7 @@ public class ValidationUtils {
         return dateTime.isAfter(LocalDateTime.now());
     }
 
-    public boolean isValidDateTimeFormat(String dateTimeString, String formatPattern) {
+    public static boolean isValidDateTimeFormat(String dateTimeString, String formatPattern) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatPattern);
             LocalDateTime.parse(dateTimeString, formatter);
