@@ -1,3 +1,5 @@
+package Category;
+
 public class Category {
     private String name;
 
