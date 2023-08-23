@@ -21,6 +21,8 @@ public class Transaction {
         this.dateTime = ZonedDateTime.from(LocalDateTime.now());
     }
 
+
+    DataManipulationUtils dataManipulationUtils = new DataManipulationUtils();
     public Transaction(double amount, String description, Category category, String dateTimeString, boolean isIncome) {
         ValidationUtils validationUtils = new ValidationUtils();
 
@@ -56,5 +58,17 @@ public class Transaction {
 
     public String getTransactionID() {
         return this.transactionID;
+    }
+
+    public ZonedDateTime getDateTime() {
+        return this.dateTime;
+    }
+
+    public void setDateTime(ZonedDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public void setDateTime(String dateTime, String formate) {
+        this.dateTime = ZonedDateTime.from(dataManipulationUtils.ConvertDateStringToLocalDateTime(dateTime, formate));
     }
 }

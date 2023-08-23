@@ -28,7 +28,4 @@ public class TransactionNode {
        return this.nextRef;
     }
 
-
-
-
 }
