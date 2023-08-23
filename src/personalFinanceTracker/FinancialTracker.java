@@ -1,4 +1,4 @@
-package com.company;
+package personalFinanceTracker;
 
 public class FinancialTracker {
 }

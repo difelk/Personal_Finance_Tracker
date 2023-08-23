@@ -1,3 +1,7 @@
+package Category;
+
+import Category.CategoryNode;
+
 public class CategorySearch {
     public CategoryNode searchByCategoryId(String categoryId) {
         return  null;
