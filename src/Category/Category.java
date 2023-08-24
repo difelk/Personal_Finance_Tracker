@@ -28,11 +28,9 @@ public class Category {
     public Category(double budget){
         this.budget = budget;
     }
-
     public void setName(String name){
         this.categoryName = name;
     }
-
     public String getName(){
         return this.categoryName;
     }
