@@ -20,10 +20,10 @@ public class Category {
         this.creationDate = LocalDateTime.now();
         this.categoryID = generateCategoryID(categoryName, creationDate);
 
-        System.out.println("ID: " + categoryID);
-        System.out.println("Name: " + categoryName);
-        System.out.println("Description: " + description);
-        System.out.println("Date: " + creationDate);
+//        System.out.println("ID: " + categoryID);
+//        System.out.println("Name: " + categoryName);
+//        System.out.println("Description: " + description);
+//        System.out.println("Date: " + creationDate);
     }
     public Category(double budget){
         this.budget = budget;
@@ -35,6 +35,15 @@ public class Category {
 
     public String getName(){
         return this.categoryName;
+    }
+    public String getDescription(){
+        return this.description;
+    }
+    public String getCategoryID(){
+        return this.categoryID;
+    }
+    public LocalDateTime getCreationDate(){
+        return this.creationDate;
     }
     public String generateCategoryID(String categoryName, LocalDateTime datetime){
         ValidationUtils validationUtils = new ValidationUtils();
