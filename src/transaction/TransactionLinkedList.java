@@ -22,9 +22,7 @@ public class TransactionLinkedList {
     }
 
     public TransactionNode getTransactionById(String transactionId) {
-        if (isEmpty()) {
-            return null;
-        } else {
+        if (!isEmpty()) {
             TransactionNode tempNode = this.head;
             while (tempNode != null) {
                 Transaction data = tempNode.getData();
@@ -33,8 +31,8 @@ public class TransactionLinkedList {
                 }
                 tempNode = tempNode.getNextRef();
             }
-            return null;
         }
+        return null;
     }
 
     public List<TransactionNode> getTransactionByDate(String dateTime, String formate){
