@@ -43,6 +43,19 @@ public class Category {
     public LocalDateTime getCreationDate(){
         return this.creationDate;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getBudget() {
+        return budget;
+    }
+
+    public void setBudget(double budget) {
+        this.budget = budget;
+    }
+
     public String generateCategoryID(String categoryName, LocalDateTime datetime){
         ValidationUtils validationUtils = new ValidationUtils();
         String formattedDatetime;
