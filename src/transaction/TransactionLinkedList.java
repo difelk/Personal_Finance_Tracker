@@ -2,7 +2,9 @@ package transaction;
 
 import utils.DataManipulationUtils;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class TransactionLinkedList {
         }else{
             List<TransactionNode> transactionNodes = new ArrayList<>();
             TransactionNode tempNode = this.head;
-            ZonedDateTime paramDateTime = ZonedDateTime.from(dataManipulationUtils.ConvertDateStringToLocalDateTime(dateTime, formate));
+            LocalDateTime paramDateTime = LocalDateTime.from(dataManipulationUtils.ConvertDateStringToLocalDateTime(dateTime, formate));
             while (tempNode != null) {
                 if (tempNode.getData().getDateTime() == paramDateTime) {
                     transactionNodes.add(tempNode);
@@ -64,8 +66,8 @@ public class TransactionLinkedList {
             ZonedDateTime endDateTime = ZonedDateTime.from(dataManipulationUtils.ConvertDateStringToLocalDateTime(endDate, formatPattern));
 
             while (tempNode != null) {
-                ZonedDateTime transactionDateTime = tempNode.getData().getDateTime();
-                if (!transactionDateTime.isBefore(startDateTime) && !transactionDateTime.isAfter(endDateTime)) {
+                LocalDateTime transactionDateTime = tempNode.getData().getDateTime();
+                if (!transactionDateTime.isBefore(ChronoLocalDateTime.from(startDateTime)) && !transactionDateTime.isAfter(ChronoLocalDateTime.from(endDateTime))) {
                     transactionNodes.add(tempNode);
                 }
                 tempNode = tempNode.getNextRef();

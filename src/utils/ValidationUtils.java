@@ -2,9 +2,12 @@ package utils;
 
 import utils.DataManipulationUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Objects;
 
 public class ValidationUtils {
 
@@ -43,6 +46,39 @@ public class ValidationUtils {
         } catch (DateTimeParseException e) {
             return false;
         }
+    }
+
+    public boolean isITANumber(String value){
+        try{
+            double numberValue = Double.parseDouble(value);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    public boolean isItAValidDate(String date) {
+        try {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate.parse(date, dateFormatter);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
+    public boolean isItAValidTime(String time) {
+        try {
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+            LocalTime.parse(time, timeFormatter);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
+
+
+    public boolean isEmptyInput(String value){
+        return Objects.equals(value, "");
     }
 
 }
