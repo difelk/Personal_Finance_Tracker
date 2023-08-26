@@ -1,8 +1,12 @@
+package transaction;
 public class TransactionNode {
 
    private Transaction data;
     private TransactionNode nextRef;
 
+    public TransactionNode(){
+
+    }
 
     public TransactionNode(Transaction data){
         this.data = data;
@@ -24,7 +28,5 @@ public class TransactionNode {
     public TransactionNode getNextRef(){
        return this.nextRef;
     }
-
-
 
 }
