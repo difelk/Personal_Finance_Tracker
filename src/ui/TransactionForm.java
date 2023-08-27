@@ -61,6 +61,11 @@ public class TransactionForm {
 
         while (!isValid) {
             String amountInput = scanner.nextLine();
+            if (amountInput.equalsIgnoreCase("exit")) {
+                System.out.println("Exiting...");
+
+                return 0;
+            }
             try {
                 amount = Double.parseDouble(amountInput);
                 isValid = true;
@@ -81,6 +86,7 @@ public class TransactionForm {
             if (categoryLinkedList.isCategoryExists(categoryName)) {
                 if(this.amount > categoryLinkedList.getCategoryByName(categoryName).getData().getBudget()){
                     System.out.println("amount is exceeding than allocated budget in " + categoryLinkedList.getCategoryByName(categoryName).getData().getName() + " category.");
+                    System.out.println("remaining budget for " + categoryLinkedList.getCategoryByName(categoryName).getData().getName() + " is : " + categoryLinkedList.getCategoryByName(categoryName).getData().getBudget());
 
                 }else{
                     categoryLinkedList.getCategoryByName(categoryName).getData().setBudget(categoryLinkedList.getCategoryByName(categoryName).getData().getBudget() - this.amount);
