@@ -89,6 +89,18 @@ public class Transaction {
         return this.transactionID;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public String getCategory() {
+        return category.getName();
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
     public LocalDateTime getDateTime() {
         return this.dateTime;
     }

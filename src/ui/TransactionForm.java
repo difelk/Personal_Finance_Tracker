@@ -18,9 +18,15 @@ public class TransactionForm {
 
     private final CategoryLinkedList categoryLinkedList;
     private final TransactionLinkedList transactionLinkedList;
+
+//    private final DataManipulationUtils dataManipulationUtils;
     private final Scanner scanner;
 
      private double amount = 0;
+
+     private String categoryName = null;
+    private boolean isIncome;
+
     public TransactionForm(CategoryLinkedList categoryLinkedList, TransactionLinkedList transactionLinkedList) {
         this.categoryLinkedList = categoryLinkedList;
         this.transactionLinkedList = transactionLinkedList;
@@ -44,7 +50,7 @@ public class TransactionForm {
         Transaction newTransaction = new Transaction(amount, description, category, dateTime, isIncome);
 
         transactionLinkedList.addTransaction(newTransaction);
-
+        System.out.println();
         System.out.println("Transaction added successfully.");
         displayPreviousTransactions();
     }
@@ -77,11 +83,12 @@ public class TransactionForm {
                     System.out.println("amount is exceeding than allocated budget in " + categoryLinkedList.getCategoryByName(categoryName).getData().getName() + " category.");
 
                 }else{
+                    categoryLinkedList.getCategoryByName(categoryName).getData().setBudget(categoryLinkedList.getCategoryByName(categoryName).getData().getBudget() - this.amount);
                     category = categoryLinkedList.getCategoryByName(categoryName).getData();
                 }
 
             } else {
-                System.out.println("Category does not exist. Please enter a valid category name.");
+                System.out.print("Category does not exist. Please enter a valid category name.");
             }
         }
 
@@ -118,7 +125,8 @@ public class TransactionForm {
 
             String dateTimeString = dateString + " " + timeString;
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            dateTime = LocalDateTime.parse(dateTimeString);
+            dateTime = LocalDateTime.parse(dateTimeString, formatter);
+
         } else if (!dateString.isEmpty()) {
             ValidationUtils validationUtils = new ValidationUtils();
 
@@ -148,17 +156,32 @@ public class TransactionForm {
 
     private void displayPreviousTransactions() {
         if (!transactionLinkedList.isEmpty()) {
-            System.out.println("Previous Transactions:");
+            System.out.println();
+            System.out.println("            Previous Transactions:");
+            System.out.println();
             for (TransactionNode transaction : transactionLinkedList.getAllTransactions()) {
-                System.out.println(transaction);
+                System.out.println("                              Transaction ID: " + transaction.getData().getTransactionID());
+                System.out.println("                              Transaction Description: " + transaction.getData().getDescription());
+                System.out.println("                              Transaction Amount: " + transaction.getData().getAmount());
+                System.out.println("                              Transaction Date: " + transaction.getData().getCategory());
+                System.out.println("                              Transaction Date: " + transaction.getData().getDateTime());
+                System.out.println();
             }
+        }
+    }
+
+    private void handleCategoryBudget() {
+        if(this.isIncome){
+            categoryLinkedList.getCategoryByName(categoryName).getData().setBudget(categoryLinkedList.getCategoryByName(categoryName).getData().getBudget() + this.amount);
+        }else{
+            categoryLinkedList.getCategoryByName(categoryName).getData().setBudget(categoryLinkedList.getCategoryByName(categoryName).getData().getBudget() - this.amount);
         }
     }
 
     private boolean isIncomeTransaction() {
         System.out.print("Is it an income or expense? (type \"INC\" for income, \"EXP\" for expense): ");
         String transactionType = scanner.nextLine();
-
+        this.isIncome = transactionType.equalsIgnoreCase("INC");
         return transactionType.equalsIgnoreCase("INC");
     }
 }

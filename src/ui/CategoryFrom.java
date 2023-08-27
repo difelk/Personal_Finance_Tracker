@@ -67,7 +67,7 @@ class CategoryForm {
                 budget = Double.parseDouble(budgetInput);
                 isValid = true;
             } catch (NumberFormatException e) {
-                System.out.println("Invalid budget input. Please enter a valid number.");
+                System.out.print("Invalid budget input. Please enter a valid number.");
             }
         }
 
@@ -76,17 +76,17 @@ class CategoryForm {
 
     private boolean validateCategory(Category category) {
         if (category.getName().isEmpty()) {
-            System.out.println("Category name is mandatory.");
+            System.out.print("Category name is mandatory.");
             return false;
         }
 
         if (category.getDescription().isEmpty()) {
-            System.out.println("Category description is mandatory.");
+            System.out.print("Category description is mandatory.");
             return false;
         }
 
         if (category.getBudget() <= 0) {
-            System.out.println("Invalid budget value. Budget must be a positive number.");
+            System.out.print("Invalid budget value. Budget must be a positive number.");
             return false;
         }
 
@@ -94,7 +94,7 @@ class CategoryForm {
 
         if (categoryLinkedList.isCategoryExists(categoryName)) {
             System.out.println();
-            System.out.println("\u001B[31mCategory already exists.\u001B[0m");
+            System.out.print("\u001B[31mCategory already exists.\u001B[0m");
             return false;
         }
 
