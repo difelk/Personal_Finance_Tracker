@@ -16,9 +16,8 @@ public class MainMenu {
     public void displayMenu() {
         do {
             System.out.println();
-            System.out.println();
+            System.out.println("===========================================================================================");
             System.out.println("\u001B[36m                                   MAIN MENU                            \u001B[0m");
-            System.out.println();
             System.out.println();
             System.out.println("Select an option (by typing the selected option number)");
             System.out.println();
@@ -32,6 +31,8 @@ public class MainMenu {
             System.out.println("\u001B[34m07. SEARCH\u001B[0m");
             System.out.println("\u001B[34m08. HELP\u001B[0m");
             System.out.println("\u001B[31m99. EXIT\u001B[0m");
+            System.out.println();
+            System.out.println("===========================================================================================");
 
             getSelectedOption();
 
@@ -59,7 +60,7 @@ public class MainMenu {
             System.out.println();
 
             System.out.println();
-            System.out.println("----------------------------------------------");
+            System.out.println("===========================================================================================");
             System.out.println();
         } catch (Exception e) {
             System.out.println("Enter a valid option number.");
@@ -71,9 +72,10 @@ public class MainMenu {
     private void addTransaction() {
         System.out.println("                                    ADD TRANSACTION                            ");
         System.out.println();
-        TransactionForm transactionForm = new TransactionForm(categoryLinkedList);
+        TransactionForm transactionForm = new TransactionForm(categoryLinkedList, transactionLinkedList);
         transactionForm.displayTransactionForm();
     }
+
 
     private void updateTransaction() {
         System.out.println("                                    UPDATE TRANSACTION                            ");
@@ -90,7 +92,9 @@ public class MainMenu {
     private void addCategory() {
         System.out.println("                                    ADD CATEGORY                            ");
         System.out.println();
-        System.out.println("Inside the add category");
+        CategoryForm categoryFrom = new CategoryForm(categoryLinkedList);
+//        CategoryForm categoryFrom = new CategoryForm();
+        categoryFrom.displayCategoryForm();
     }
 
     private void updateCategory() {

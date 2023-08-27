@@ -31,6 +31,14 @@ public class Transaction {
         this.dateTime = ZonedDateTime.from(LocalDateTime.now()).toLocalDateTime();
     }
 
+    public Transaction(double amount, String description, Category category, LocalDateTime dateTime, boolean isIncome) {
+        this.amount = amount;
+        this.description = description;
+        this.category = category;
+        this.dateTime = dateTime;
+        this.isIncome = isIncome;
+        this.transactionID = generateTransactionID(dateTime, category, isIncome);
+    }
 
     DataManipulationUtils dataManipulationUtils = new DataManipulationUtils();
     public Transaction(double amount, String description, CategoryNode category, String dateTimeString, boolean isIncome) {
@@ -71,9 +79,10 @@ public class Transaction {
 
     }
 
-    private String generateTransactionID(LocalDateTime dateTime, CategoryNode category, boolean isIncome) {
+    private String generateTransactionID(LocalDateTime dateTime, Object category, boolean isIncome) {
         String transactionType = isIncome ? "INC" : "EXP";
-        return dateTime + (category != null ? category.getData().getName() : "") + transactionType;
+        String categoryName = (category instanceof CategoryNode) ? ((CategoryNode) category).getData().getName() : "";
+        return dateTime + categoryName + transactionType;
     }
 
     public String getTransactionID() {

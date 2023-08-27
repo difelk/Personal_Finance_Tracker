@@ -1,147 +1,164 @@
+
 package ui;
 
 import Category.Category;
 import Category.CategoryLinkedList;
 import transaction.Transaction;
 import transaction.TransactionLinkedList;
+import transaction.TransactionNode;
 import utils.DataManipulationUtils;
 import utils.ValidationUtils;
-import Category.CategoryNode;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class TransactionForm {
 
-    private String amount;
-    private String description;
-    private String category;
-    private String date;
-    private String time;
-
-    private boolean isIncome;
-
-    private final ValidationUtils validationUtils = new ValidationUtils();
-
-    private  final  DataManipulationUtils dataManipulationUtils = new DataManipulationUtils();
-
-    private final TransactionLinkedList transactionLinkedList = new TransactionLinkedList();
-
-    private Transaction transaction;
     private final CategoryLinkedList categoryLinkedList;
-    private final Scanner scanner = new Scanner(System.in);
+    private final TransactionLinkedList transactionLinkedList;
+    private final Scanner scanner;
 
-    public TransactionForm(CategoryLinkedList categoryLinkedList) {
+     private double amount = 0;
+    public TransactionForm(CategoryLinkedList categoryLinkedList, TransactionLinkedList transactionLinkedList) {
         this.categoryLinkedList = categoryLinkedList;
+        this.transactionLinkedList = transactionLinkedList;
+        this.scanner = new Scanner(System.in);
     }
-
 
     public void displayTransactionForm() {
-        boolean continueEntering = true;
+        System.out.print("Enter amount: ");
+        amount = getAmountFromUser();
 
-        while (continueEntering) {
-            int invalidInputCounter = 0;
+        System.out.print("Enter description: ");
+        String description = scanner.nextLine();
 
-            amount = getInput("* Amount:");
-            description = getInput("Description:");
-            category = getInput("* Category:");
-            date = getInput("Date (YYYY-MM-DD):");
-            time = getInput("Time (HH:mm):");
-            String transactionType = getInput("Is it an Income or expense? (type \"INC\" for INCOME, \"EXP\" for EXPENSE)");
+        System.out.print("Enter category name: ");
+        Category category = getCategoryFromUser();
 
-            boolean isValid = validateInput(amount, description, category, date, time, transactionType);
+        LocalDateTime dateTime = getDateTimeFromUser();
 
-            if (isValid) {
-                invalidInputCounter = 0;
-                submitForm(amount, description, category, date, time, transactionType);
-            } else {
-                invalidInputCounter++;
+        boolean isIncome = isIncomeTransaction();
+
+        Transaction newTransaction = new Transaction(amount, description, category, dateTime, isIncome);
+
+        transactionLinkedList.addTransaction(newTransaction);
+
+        System.out.println("Transaction added successfully.");
+        displayPreviousTransactions();
+    }
+
+    private double getAmountFromUser() {
+        double amount = -1;
+        boolean isValid = false;
+
+        while (!isValid) {
+            String amountInput = scanner.nextLine();
+            try {
+                amount = Double.parseDouble(amountInput);
+                isValid = true;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid amount input. Please enter a valid number.");
             }
+        }
 
-            if (!isValid) {
-                System.out.println("You've entered invalid input(s).");
-                if (!askToContinue()) {
-                    System.out.println("Exiting.");
-                    continueEntering = false;
+        return amount;
+    }
+
+    private Category getCategoryFromUser() {
+        Category category = null;
+
+        while (category == null) {
+            String categoryName = scanner.nextLine().toLowerCase();
+
+            if (categoryLinkedList.isCategoryExists(categoryName)) {
+                if(this.amount > categoryLinkedList.getCategoryByName(categoryName).getData().getBudget()){
+                    System.out.println("amount is exceeding than allocated budget in " + categoryLinkedList.getCategoryByName(categoryName).getData().getName() + " category.");
+
+                }else{
+                    category = categoryLinkedList.getCategoryByName(categoryName).getData();
                 }
-                invalidInputCounter = 0;
+
+            } else {
+                System.out.println("Category does not exist. Please enter a valid category name.");
             }
         }
-}
 
-
-    private String getInput(String prompt) {
-        System.out.print(prompt + " ");
-        return scanner.nextLine();
+        return category;
     }
 
-    private boolean validateInput(String amount, String description, String category, String date, String time, String transactionType) {
-        boolean isAmountValid = validationUtils.isITANumber(amount);
-        boolean isCategoryValid = !validationUtils.isEmptyInput(category) &&
-                categoryLinkedList.isCategoryExists(category);
-        if(this.date.equals("") && this.time.equals("")){
+    private LocalDateTime getDateTimeFromUser() {
+        LocalDateTime defaultDateTime = LocalDateTime.now();
 
-        }else{
+        System.out.print("Enter date (YYYY-MM-DD): ");
+        String dateString = scanner.nextLine();
 
-        }
-        boolean isDateValid = validationUtils.isItAValidDate(date);
-        boolean isTimeValid = validationUtils.isItAValidTime(time);
+        System.out.print("Enter time (HH:mm): ");
+        String timeString = scanner.nextLine();
 
-        if (!isAmountValid) {
-            System.out.println();
-            System.out.println("\u001B[31mInvalid amount\u001B[0m");
-            System.out.println();
-        }
-        if (!isCategoryValid) {
-            System.out.println();
-            System.out.println("\u001B[31mInvalid category\u001B[0m");
-            System.out.println();
-        }
-        if (!isDateValid) {
-            System.out.println();
-            System.out.println("\u001B[31mInvalid date\u001B[0m");
-            System.out.println();
-        }
-        if (!isTimeValid) {
-            System.out.println();
-            System.out.println("\u001B[31mInvalid time\u001B[0m");
-            System.out.println();
+        if (dateString.isEmpty() && timeString.isEmpty()) {
+            return defaultDateTime;
         }
 
-        if ("INC".equalsIgnoreCase(transactionType) || "INCOME".equalsIgnoreCase(transactionType)) {
-            this.isIncome = true;
-        } else if ("EXP".equalsIgnoreCase(transactionType) || "EXPENSES".equalsIgnoreCase(transactionType) || "EXPENSE".equalsIgnoreCase(transactionType)) {
-            this.isIncome = false;
+        LocalDateTime dateTime;
+
+        if (!dateString.isEmpty() && !timeString.isEmpty()) {
+            ValidationUtils validationUtils = new ValidationUtils();
+
+            while (!validationUtils.isItAValidDate(dateString)) {
+                System.out.println("Invalid date format. Please enter a valid date (YYYY-MM-DD): ");
+                dateString = scanner.nextLine();
+            }
+
+            while (!validationUtils.isItAValidTime(timeString)) {
+                System.out.println("Invalid time format. Please enter a valid time (HH:mm): ");
+                timeString = scanner.nextLine();
+            }
+
+            String dateTimeString = dateString + " " + timeString;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            dateTime = LocalDateTime.parse(dateTimeString);
+        } else if (!dateString.isEmpty()) {
+            ValidationUtils validationUtils = new ValidationUtils();
+
+            while (!validationUtils.isItAValidDate(dateString)) {
+                System.out.println("Invalid date format. Please enter a valid date (YYYY-MM-DD): ");
+                dateString = scanner.nextLine();
+            }
+
+            dateTime = DataManipulationUtils.ConvertDateStringToLocalDateTime(dateString).with(LocalTime.MIN);
+        } else if (!timeString.isEmpty()) {
+            ValidationUtils validationUtils = new ValidationUtils();
+
+            while (!validationUtils.isItAValidTime(timeString)) {
+                System.out.println("Invalid time format. Please enter a valid time (HH:mm): ");
+                timeString = scanner.nextLine();
+            }
+
+            LocalDateTime time = DataManipulationUtils.convertStringToTime(timeString);
+            dateTime = defaultDateTime.withHour(time.getHour()).withMinute(time.getMinute());
         } else {
-            System.out.println("\u001B[31mInvalid transaction type\u001B[0m");
-            return false;
+            dateTime = defaultDateTime;
         }
 
-        return isAmountValid && isCategoryValid && isDateValid && isTimeValid;
-    }
-
-    private void submitForm(String amount, String description, String category, String date, String time, String transactionType) {
-        CategoryNode selectedCategory = categoryLinkedList.getCategoryByName(category);
-
-        double amountValue = dataManipulationUtils.convertStringToDouble(amount);
-        LocalDateTime dateValue = dataManipulationUtils.ConvertDateStringToLocalDateTime(date);
-        LocalTime timeValue = LocalTime.from(dataManipulationUtils.convertStringToTime(time));
-        LocalDateTime fullDateTime = dataManipulationUtils.concatDateAndTime(LocalDate.from(dateValue), timeValue);
-
-        Transaction transaction = new Transaction(amountValue, description, selectedCategory, fullDateTime, isIncome);
-
-        transactionLinkedList.addTransaction(transaction);
+        return dateTime;
     }
 
 
+    private void displayPreviousTransactions() {
+        if (!transactionLinkedList.isEmpty()) {
+            System.out.println("Previous Transactions:");
+            for (TransactionNode transaction : transactionLinkedList.getAllTransactions()) {
+                System.out.println(transaction);
+            }
+        }
+    }
 
+    private boolean isIncomeTransaction() {
+        System.out.print("Is it an income or expense? (type \"INC\" for income, \"EXP\" for expense): ");
+        String transactionType = scanner.nextLine();
 
-
-    private boolean askToContinue() {
-        System.out.print("Do you want to continue entering data? (yes/no): ");
-        String response = scanner.nextLine().trim().toLowerCase();
-        return response.equals("yes") || response.equals("y");
+        return transactionType.equalsIgnoreCase("INC");
     }
 }

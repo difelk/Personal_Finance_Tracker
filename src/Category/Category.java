@@ -20,14 +20,20 @@ public class Category {
         this.creationDate = LocalDateTime.now();
         this.categoryID = generateCategoryID(categoryName, creationDate);
 
-//        System.out.println("ID: " + categoryID);
-//        System.out.println("Name: " + categoryName);
-//        System.out.println("Description: " + description);
-//        System.out.println("Date: " + creationDate);
     }
     public Category(double budget){
         this.budget = budget;
     }
+
+    public Category(String categoryName, String description, double budgetValue, LocalDateTime fullDateTime) {
+        this.categoryName = categoryName;
+        this.description = description;
+        this.budget = budgetValue;
+        this.creationDate = fullDateTime;
+        this.categoryID = generateCategoryID(categoryName, creationDate);
+
+    }
+
     public void setName(String name){
         this.categoryName = name;
     }
