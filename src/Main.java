@@ -12,8 +12,15 @@ public class Main {
 
 
         MainMenu mainMenu = new MainMenu();
+        Main.preBuildData();
         mainMenu.displayMenu();
 
 
+    }
+
+
+    public static void preBuildData(){
+        //create hardcoded 3 categories (water bill(expenses), electricity bill(expenses), house rent(income),
+        //create hardcoded 3 transaction for above each category,
     }
 }
