@@ -2,6 +2,7 @@
 package ui;
 
 import Category.Category;
+import Category.CategoryNode;
 import Category.CategoryLinkedList;
 import transaction.Transaction;
 import transaction.TransactionLinkedList;
@@ -31,6 +32,7 @@ public class TransactionForm {
     public TransactionForm(CategoryLinkedList categoryLinkedList, TransactionLinkedList transactionLinkedList) {
         this.categoryLinkedList = categoryLinkedList;
         this.transactionLinkedList = transactionLinkedList;
+
         this.scanner = new Scanner(System.in);
     }
 
@@ -241,7 +243,7 @@ public class TransactionForm {
         Category category = null;
 
         while (category == null) {
-            String categoryName = scanner.nextLine().toLowerCase();
+            String categoryName = scanner.nextLine().toLowerCase().trim();
 
             if (categoryLinkedList.isCategoryExists(categoryName)) {
                 if(this.amount > categoryLinkedList.getCategoryByName(categoryName).getData().getBudget()){

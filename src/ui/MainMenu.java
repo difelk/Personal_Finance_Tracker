@@ -14,6 +14,10 @@ public class MainMenu {
     private final Scanner scanner = new Scanner(System.in);
 
     public void displayMenu() {
+        CategoryForm categoryForm = new CategoryForm(categoryLinkedList);
+        categoryForm.hardCodedCategoryForm(categoryLinkedList);
+
+
         do {
             System.out.println();
             System.out.println("===========================================================================================");
