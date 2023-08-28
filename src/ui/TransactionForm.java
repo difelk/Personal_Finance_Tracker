@@ -12,6 +12,7 @@ import utils.ValidationUtils;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Scanner;
 
 public class TransactionForm {
@@ -54,6 +55,157 @@ public class TransactionForm {
         System.out.println("Transaction added successfully.");
         displayPreviousTransactions();
     }
+
+
+    public TransactionNode selectTransaction(List<TransactionNode> transactions) {
+        if (transactions != null && !transactions.isEmpty()) {
+            System.out.print("Select a transaction by entering its number: ");
+            int selectedNumber = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            if (selectedNumber >= 1 && selectedNumber <= transactions.size()) {
+                return transactions.get(selectedNumber - 1);
+            } else {
+                System.out.println("Invalid selection. Please enter a valid number.");
+            }
+        } else {
+            System.out.println("No transactions found.");
+        }
+
+        return null;
+    }
+
+
+    public TransactionNode getTransactionById(){
+        System.out.print("Enter Transaction ID: ");
+        String id = scanner.next();
+        System.out.println();
+        if(id.isEmpty()){
+            System.out.println("you enter Empty Transaction ID");
+        }else{
+            TransactionNode transactionNode = transactionLinkedList.getTransactionById(id);
+            if(transactionNode == null){
+                System.out.println("invalid Transaction id");
+            }else{
+                return transactionNode;
+            }
+        }
+
+       return null;
+    }
+
+
+    public List<TransactionNode> searchTransactionsByDate() {
+        System.out.print("Enter date to search (YYYY-MM-DD): ");
+        String dateString = scanner.nextLine();
+        // Validate and convert dateString if needed
+
+        return transactionLinkedList.getTransactionByDate(dateString, "yyyy-MM-dd");
+    }
+
+
+    public List<TransactionNode> searchTransactionsByDateRange() {
+        System.out.print("Enter start date (YYYY-MM-DD): ");
+        String startDateString = scanner.nextLine();
+        // Validate and convert startDateString if needed
+
+        System.out.print("Enter end date (YYYY-MM-DD): ");
+        String endDateString = scanner.nextLine();
+        // Validate and convert endDateString if needed
+
+        return transactionLinkedList.getTransactionsByDateRange(startDateString, endDateString, "yyyy-MM-dd");
+    }
+
+
+    private void updateTransaction() {
+        System.out.println("                                    UPDATE TRANSACTION                            ");
+        System.out.println();
+        TransactionForm transactionForm = new TransactionForm(categoryLinkedList, transactionLinkedList);
+
+        int updateOption = -1;
+
+        do {
+            try {
+                System.out.println();
+                System.out.println("Select an update option:");
+                System.out.println();
+                System.out.println("1. Search transaction by ID");
+                System.out.println("2. Search transaction by date");
+                System.out.println("3. Search transaction by date range");
+                System.out.println("4. Get all transactions");
+                System.out.println("\u001B[34m5. Back to main menu\u001B[0m");
+                System.out.println();
+                System.out.println();
+                System.out.print("Enter your choice: ");
+
+                String input = scanner.nextLine();
+                System.out.println();
+
+                if (!input.matches("\\d+")) {
+                    System.out.println();
+                    System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                    System.out.println();
+                    continue;
+                }
+
+                updateOption = Integer.parseInt(input);
+
+                switch (updateOption) {
+                    case 1:
+                        TransactionNode transactionNode = transactionForm.getTransactionById();
+                        if (transactionNode != null) {
+                            // Perform update operation on transactionNode.getData()
+                        }
+                        break;
+
+                    case 2:
+                        List<TransactionNode> transactionsByDate = transactionForm.searchTransactionsByDate();
+                        if (!transactionsByDate.isEmpty()) {
+                            TransactionNode selectedTransactionByDate = transactionForm.selectTransaction(transactionsByDate);
+                            if (selectedTransactionByDate != null) {
+                                // Perform update operation on selectedTransactionByDate.getData()
+                            }
+                        }
+                        break;
+
+                    case 3:
+                        List<TransactionNode> transactionsByDateRange = transactionForm.searchTransactionsByDateRange();
+                        if (!transactionsByDateRange.isEmpty()) {
+                            TransactionNode selectedTransactionByDateRange = transactionForm.selectTransaction(transactionsByDateRange);
+                            if (selectedTransactionByDateRange != null) {
+                                // Perform update operation on selectedTransactionByDateRange.getData()
+                            }
+                        }
+                        break;
+
+                    case 4:
+                        List<TransactionNode> allTransactions = transactionLinkedList.getAllTransactions();
+                        if (!allTransactions.isEmpty()) {
+                            TransactionNode selectedTransaction = transactionForm.selectTransaction(allTransactions);
+                            if (selectedTransaction != null) {
+                                // Perform update operation on selectedTransaction.getData()
+                            }
+                        }
+                        break;
+
+                    case 5:
+                        System.out.println();
+                        System.out.println("                                      \u001B[34mReturning to main menu...\u001B[0m");
+                        System.out.println();
+                        break;
+
+                    default:
+                        System.out.println();
+                        System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                        System.out.println();
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid option number.");
+                updateOption = -1;
+            }
+        } while (updateOption != 5);
+    }
+
 
     private double getAmountFromUser() {
         double amount = -1;
