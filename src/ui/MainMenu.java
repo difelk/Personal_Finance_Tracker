@@ -233,7 +233,7 @@ public class MainMenu {
                 System.out.println();
                 System.out.println("Select an update option for categories:");
                 System.out.println();
-                System.out.println("1. Search categories by ID");
+                System.out.println("1. Search categories by name");
                 System.out.println("2. Search categories by date");
                 System.out.println("3. Search categories by date range");
                 System.out.println("4. Get all categories");
@@ -253,19 +253,20 @@ public class MainMenu {
                 }
 
                 updateOption = Integer.parseInt(input);
-
+                CategoryForm categoryFrom = new CategoryForm(categoryLinkedList);
                 switch (updateOption) {
                     case 1:
 
+                        categoryFrom.updateCategoryByName();
                         break;
                     case 2:
-
+                        categoryFrom.updateCategoryByDate();
                         break;
                     case 3:
-
+                        categoryFrom.updateCategoryByDateRange();
                         break;
                     case 4:
-
+                        categoryFrom.updateCategoryAll();
                         break;
                     case 5:
                         System.out.println();
