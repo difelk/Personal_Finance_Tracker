@@ -3,7 +3,11 @@ package ui;
 import Category.Category;
 import Category.CategoryNode;
 import Category.CategoryLinkedList;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Scanner;
 
  class CategoryForm {
@@ -37,7 +41,6 @@ import java.util.Scanner;
          }
 
      }
-
     public void displayCategoryForm() {
         System.out.print("Enter category name: ");
         String categoryName = scanner.nextLine();
@@ -72,7 +75,6 @@ import java.util.Scanner;
     }
 
 
-
     private double getBudgetFromUser() {
         double budget = -1;
         boolean isValid = false;
@@ -93,8 +95,201 @@ import java.util.Scanner;
     }
 
 
+     public void updateCategoryByName() {
+         System.out.print("Enter category name to update: ");
+         String categoryName = scanner.nextLine();
+         System.out.println();
 
-    private boolean validateCategory(Category category) {
+         CategoryNode categoryNodeToUpdate = categoryLinkedList.getCategoryByName(categoryName);
+
+         if (categoryNodeToUpdate == null) {
+             System.out.println("Category not found with the given name.");
+             return;
+         }
+
+         Category existingCategory = categoryNodeToUpdate.getData();
+
+         System.out.println("Current Category Details:");
+         System.out.println("Old Name: " + existingCategory.getName());
+         System.out.println("Old Description: " + existingCategory.getDescription());
+         System.out.println("Old Budget: " + existingCategory.getBudget());
+         System.out.println();
+
+         System.out.println("Enter updated values (press enter to skip):");
+
+         System.out.print("New Name: ");
+         String updatedCategoryName = scanner.nextLine().trim();
+         if (updatedCategoryName.isEmpty()) {
+             updatedCategoryName = existingCategory.getName();
+         }
+
+         System.out.print("New Description: ");
+         String updatedDescription = scanner.nextLine().trim();
+         if (updatedDescription.isEmpty()) {
+             updatedDescription = existingCategory.getDescription();
+         }
+
+         double updatedBudget = getBudgetFromUser();
+
+         Category updatedCategory = new Category(updatedCategoryName, updatedDescription, updatedBudget, existingCategory.getCreationDate());
+
+         categoryLinkedList.updateCategoryByName(categoryName, updatedCategory);
+
+         System.out.println("Category updated successfully.");
+         System.out.println();
+     }
+
+
+     public void updateCategoryByDate() {
+         System.out.print("Enter category creation date (yyyy-MM-dd) to update: ");
+         String creationDateStr = scanner.nextLine();
+         System.out.println();
+
+         LocalDate creationDate;
+         try {
+             creationDate = LocalDate.parse(creationDateStr);
+         } catch (DateTimeParseException e) {
+             System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+             return;
+         }
+
+         List<CategoryNode> matchingCategories = categoryLinkedList.getCategoriesByDay(creationDate);
+
+         if (matchingCategories.isEmpty()) {
+             System.out.println("No categories found with the given creation date.");
+             return;
+         }
+
+         if (matchingCategories.size() > 1) {
+             System.out.println("Multiple categories found with the same creation date. Please choose a specific category:");
+             for (int i = 0; i < matchingCategories.size(); i++) {
+                 System.out.println((i + 1) + ". " + matchingCategories.get(i).getData().getName());
+             }
+
+             System.out.print("Enter the number of the category to update: ");
+             int choice = scanner.nextInt();
+             scanner.nextLine();
+
+             if (choice < 1 || choice > matchingCategories.size()) {
+                 System.out.println("Invalid choice.");
+                 return;
+             }
+
+             CategoryNode selectedNode = matchingCategories.get(choice - 1);
+             updateCategoryDetails(selectedNode.getData());
+         } else {
+             updateCategoryDetails(matchingCategories.get(0).getData());
+         }
+     }
+
+     public void updateCategoryByDateRange() {
+         System.out.print("Enter start date (yyyy-MM-dd) for the date range: ");
+         String startDateStr = scanner.nextLine();
+         System.out.println();
+
+         System.out.print("Enter end date (yyyy-MM-dd) for the date range: ");
+         String endDateStr = scanner.nextLine();
+         System.out.println();
+
+         LocalDate startDate, endDate;
+         try {
+             startDate = LocalDate.parse(startDateStr);
+             endDate = LocalDate.parse(endDateStr);
+         } catch (DateTimeParseException e) {
+             System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+             return;
+         }
+
+         if (startDate.isAfter(endDate)) {
+             System.out.println("Start date must be before the end date.");
+             return;
+         }
+
+         List<CategoryNode> categoriesInRange = categoryLinkedList.getCategoriesByDateRange(startDate, endDate);
+
+         if (categoriesInRange.isEmpty()) {
+             System.out.println("No categories found within the specified date range.");
+             return;
+         }
+
+         System.out.println("Categories found within the specified date range:");
+         for (int i = 0; i < categoriesInRange.size(); i++) {
+             System.out.println((i + 1) + ". " + categoriesInRange.get(i).getData().getName());
+         }
+
+         System.out.print("Enter the number of the category to update: ");
+         int choice = scanner.nextInt();
+         scanner.nextLine();
+
+         if (choice < 1 || choice > categoriesInRange.size()) {
+             System.out.println("Invalid choice.");
+             return;
+         }
+
+         CategoryNode selectedNode = categoriesInRange.get(choice - 1);
+         updateCategoryDetails(selectedNode.getData());
+     }
+
+     public void updateCategoryAll() {
+         List<CategoryNode> allCategories = categoryLinkedList.getAllCategories();
+
+         if (allCategories.isEmpty()) {
+             System.out.println("No categories found.");
+             return;
+         }
+
+         System.out.println("All Categories:");
+         for (int i = 0; i < allCategories.size(); i++) {
+             System.out.println((i + 1) + ". " + allCategories.get(i).getData().getName());
+         }
+
+         System.out.print("Enter the number of the category to update: ");
+         int choice = scanner.nextInt();
+         scanner.nextLine();
+
+         if (choice < 1 || choice > allCategories.size()) {
+             System.out.println("Invalid choice.");
+             return;
+         }
+
+         CategoryNode selectedNode = allCategories.get(choice - 1);
+         updateCategoryDetails(selectedNode.getData());
+     }
+
+
+     private void updateCategoryDetails(Category existingCategory) {
+         System.out.println("Current Category Details:");
+         System.out.println("Old Name: " + existingCategory.getName());
+         System.out.println("Old Description: " + existingCategory.getDescription());
+         System.out.println("Old Budget: " + existingCategory.getBudget());
+         System.out.println();
+
+         System.out.println("Enter updated values (press enter to skip):");
+
+         System.out.print("New Name: ");
+         String updatedCategoryName = scanner.nextLine().trim();
+         if (updatedCategoryName.isEmpty()) {
+             updatedCategoryName = existingCategory.getName();
+         }
+
+         System.out.print("New Description: ");
+         String updatedDescription = scanner.nextLine().trim();
+         if (updatedDescription.isEmpty()) {
+             updatedDescription = existingCategory.getDescription();
+         }
+
+         double updatedBudget = getBudgetFromUser();
+
+         Category updatedCategory = new Category(updatedCategoryName, updatedDescription, updatedBudget, existingCategory.getCreationDate());
+
+         categoryLinkedList.updateCategoryByName(existingCategory.getName(), updatedCategory);
+
+         System.out.println("Category updated successfully.");
+         System.out.println();
+     }
+
+
+     private boolean validateCategory(Category category) {
         if (category.getName().isEmpty()) {
             System.out.print("Category name is mandatory.");
             return false;

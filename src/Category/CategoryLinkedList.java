@@ -126,6 +126,27 @@ public class CategoryLinkedList {
     }
 
 
+    public void updateCategoryByName(String categoryName, Category updatedCategory) {
+        CategoryNode categoryNodeToUpdate = getCategoryByName(categoryName);
+
+        if (categoryNodeToUpdate != null) {
+            Category existingCategory = categoryNodeToUpdate.getData();
+
+            if (updatedCategory.getBudget() >= 0) {
+                existingCategory.setBudget(updatedCategory.getBudget());
+            }
+            if (updatedCategory.getDescription() != null) {
+                existingCategory.setDescription(updatedCategory.getDescription());
+            }
+
+            if (!existingCategory.getName().equalsIgnoreCase(updatedCategory.getName()) &&
+                    !isCategoryExists(updatedCategory.getName())) {
+                existingCategory.setName(updatedCategory.getName());
+            }
+        }
+    }
+
+
     public boolean isCategoryExists(String categoryName) {
         CategoryNode currentNode = head;
 

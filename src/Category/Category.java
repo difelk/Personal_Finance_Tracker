@@ -74,6 +74,6 @@ public class Category {
             throw new IllegalArgumentException("Invalid date and time format.");
         }
 
-        return categoryName + "_" + formattedDatetime;
+        return categoryName + "" + formattedDatetime.replace(":", "").replace("-", "");
     }
 }
