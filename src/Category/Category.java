@@ -26,7 +26,7 @@ public class Category {
     }
 
     public Category(String categoryName, String description, double budgetValue, LocalDateTime fullDateTime) {
-        this.categoryName = categoryName;
+        this.categoryName = categoryName.toLowerCase().trim();
         this.description = description;
         this.budget = budgetValue;
         this.creationDate = fullDateTime;
@@ -35,7 +35,7 @@ public class Category {
     }
 
     public void setName(String name){
-        this.categoryName = name;
+        this.categoryName = name.toLowerCase().trim();
     }
     public String getName(){
         return this.categoryName;

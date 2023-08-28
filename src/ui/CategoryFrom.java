@@ -1,17 +1,12 @@
 package ui;
 
 import Category.Category;
+import Category.CategoryNode;
 import Category.CategoryLinkedList;
-import utils.DataManipulationUtils;
-import utils.ValidationUtils;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-class CategoryForm {
+ class CategoryForm {
 
     private final CategoryLinkedList categoryLinkedList;
     private final Scanner scanner;
@@ -20,6 +15,28 @@ class CategoryForm {
         this.categoryLinkedList = categoryLinkedList;
         this.scanner = new Scanner(System.in);
     }
+
+     public void hardCodedCategoryForm(CategoryLinkedList categoryLinkedListMain) {
+
+         LocalDateTime creationDateTime = LocalDateTime.now();
+
+         Category category1 = new Category("Groceries", "Grocery expenses", 200, creationDateTime);
+         Category category2 = new Category("Entertainment", "Entertainment expenses", 100, creationDateTime);
+         Category category3 = new Category("Transportation", "Transportation expenses", 150, creationDateTime);
+
+         if (!categoryLinkedListMain.isCategoryExists(category1.getName())) {
+             categoryLinkedListMain.addCategory(category1);
+         }
+
+         if (!categoryLinkedListMain.isCategoryExists(category2.getName())) {
+             categoryLinkedListMain.addCategory(category2);
+         }
+
+         if (!categoryLinkedListMain.isCategoryExists(category3.getName())) {
+             categoryLinkedListMain.addCategory(category3);
+         }
+
+     }
 
     public void displayCategoryForm() {
         System.out.print("Enter category name: ");
@@ -55,6 +72,7 @@ class CategoryForm {
     }
 
 
+
     private double getBudgetFromUser() {
         double budget = -1;
         boolean isValid = false;
@@ -73,6 +91,8 @@ class CategoryForm {
 
         return budget;
     }
+
+
 
     private boolean validateCategory(Category category) {
         if (category.getName().isEmpty()) {
