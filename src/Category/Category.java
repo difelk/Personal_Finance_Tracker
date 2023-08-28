@@ -66,7 +66,6 @@ public class Category {
         ValidationUtils validationUtils = new ValidationUtils();
         String formattedDatetime;
 
-        // Creating Category ID combining today's date n time
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
             formattedDatetime = datetime.format(formatter);
@@ -74,14 +73,6 @@ public class Category {
         catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Invalid date and time format.");
         }
-
-//        if (!formattedDatetime.toLocalTime().equals(LocalTime.of(0, 0))) {
-//            formattedDatetime = formattedDatetime.with(LocalTime.MIN);
-//        }
-
-//        if (validationUtils.isDateAFutureDate(formattedDatetime)) {
-//            throw new IllegalArgumentException("Creation date cannot be in the future.");
-//        }
 
         return categoryName + "_" + formattedDatetime;
     }

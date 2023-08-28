@@ -55,10 +55,17 @@ public class MainMenu {
         try {
             System.out.println();
             System.out.print("Enter selected option number: ");
-            selectedOption = scanner.nextInt();
-            System.out.println();
-            System.out.println();
+            String input = scanner.nextLine();
 
+            if (!input.matches("\\d+")) {
+                System.out.println();
+                System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                System.out.println();
+                isMenuOpen = true;
+                return;
+            }
+
+            selectedOption = Integer.parseInt(input);
             System.out.println();
             System.out.println("===========================================================================================");
             System.out.println();
@@ -68,6 +75,10 @@ public class MainMenu {
             isMenuOpen = true;
         }
     }
+
+
+
+
 
     private void addTransaction() {
         System.out.println("                                    ADD TRANSACTION                            ");
@@ -80,14 +91,125 @@ public class MainMenu {
     private void updateTransaction() {
         System.out.println("                                    UPDATE TRANSACTION                            ");
         System.out.println();
-        System.out.println("Inside the update transaction");
+        TransactionForm transactionForm = new TransactionForm(categoryLinkedList, transactionLinkedList);
+        int updateOption = -1;;
+
+        do {
+            try {
+                System.out.println();
+                System.out.println("Select an update option:");
+                System.out.println();
+                System.out.println("1. Search transaction by ID");
+                System.out.println("2. Search transaction by date");
+                System.out.println("3. Search transaction by date range");
+                System.out.println("4. Get all transactions");
+                System.out.println("\u001B[34m5. Back to main menu\u001B[0m");
+                System.out.println();
+                System.out.println();
+                System.out.print("Enter your choice: ");
+
+
+                String input = scanner.nextLine();
+                System.out.println();
+
+                if (!input.matches("\\d+")) {
+                    System.out.println();
+                    System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                    System.out.println();
+                    continue;
+                }
+
+                updateOption = Integer.parseInt(input);
+
+                switch (updateOption) {
+                    case 1:
+                        transactionForm.getTransactionById();
+                        break;
+                    case 2:
+                        transactionForm.searchTransactionsByDate();
+                        break;
+                    case 3:
+                        transactionForm.searchTransactionsByDateRange();
+                        break;
+                    case 4:
+//                        transactionForm.getAllTransactions();
+                        break;
+                    case 5:
+                        System.out.println();
+                        System.out.println("                                      \u001BReturning to main menu...\u001B[0m");
+                        System.out.println();
+                        break;
+                    default:
+                        System.out.println();
+                        System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                        System.out.println();
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid option number.");
+                updateOption = -1;
+            }
+        } while (updateOption != 5);
     }
 
     private void deleteTransaction() {
         System.out.println("                                    DELETE TRANSACTION                            ");
         System.out.println();
-        System.out.println("Inside the delete transaction");
+        int deleteOption = -1;
+
+        do {
+            try {
+                System.out.println();
+                System.out.println("Select a delete option:");
+                System.out.println();
+                System.out.println("1. Search transaction by ID");
+                System.out.println("2. Search transaction by date");
+                System.out.println("3. Search transaction by date range");
+                System.out.println("4. Get all transactions");
+                System.out.println("\u001B[34m5. Back to main menu\u001B[0m");
+                System.out.println();
+                System.out.print("Enter your choice: ");
+
+
+                String input = scanner.nextLine();
+                System.out.println();
+
+                if (!input.matches("\\d+")) {
+                    System.out.println();
+                    System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                    System.out.println();
+                    continue;
+                }
+
+                deleteOption = Integer.parseInt(input);
+
+                switch (deleteOption) {
+                    case 1:
+                        // Implement search transaction by ID and delete
+                        break;
+                    case 2:
+                        // Implement search transaction by date and delete
+                        break;
+                    case 3:
+                        // Implement search transaction by date range and delete
+                        break;
+                    case 4:
+                        // Implement get all transactions and delete
+                        break;
+                    case 5:
+                        System.out.println("                                      \u001BReturning to main menu...\u001B[0m");
+                        break;
+                    default:
+                        System.out.println();
+                        System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                        System.out.println();
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid option number.");
+                deleteOption = -1;
+            }
+        } while (deleteOption != 5);
     }
+
 
     private void addCategory() {
         System.out.println("                                    ADD CATEGORY                            ");
@@ -98,21 +220,163 @@ public class MainMenu {
     }
 
     private void updateCategory() {
-        System.out.println("                                    UPDATE TRANSACTION                            ");
+        System.out.println("                                    UPDATE CATEGORY                            ");
         System.out.println();
-        System.out.println("Inside the update category");
+        int updateOption = -1;
+
+        do {
+            try {
+                System.out.println();
+                System.out.println("Select an update option for categories:");
+                System.out.println();
+                System.out.println("1. Search categories by ID");
+                System.out.println("2. Search categories by date");
+                System.out.println("3. Search categories by date range");
+                System.out.println("4. Get all categories");
+                System.out.println("\u001B[34m5. Back to main menu\u001B[0m");
+                System.out.println();
+                System.out.print("Enter your choice: ");
+
+
+                String input = scanner.nextLine();
+                System.out.println();
+
+                if (!input.matches("\\d+")) {
+                    System.out.println();
+                    System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                    System.out.println();
+                    continue;
+                }
+
+                updateOption = Integer.parseInt(input);
+
+                switch (updateOption) {
+                    case 1:
+
+                        break;
+                    case 2:
+
+                        break;
+                    case 3:
+
+                        break;
+                    case 4:
+
+                        break;
+                    case 5:
+                        System.out.println();
+                        System.out.println("                                      \u001BReturning to main menu...\u001B[0m");
+                        System.out.println();
+                        break;
+                    default:
+                        System.out.println();
+                        System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                        System.out.println();
+                }
+            } catch (NumberFormatException e) {
+                System.out.println();
+                System.out.print("Invalid input. Please enter a valid option number. ");
+                updateOption = -1;
+                System.out.println();
+            }
+        } while (updateOption != 5);
     }
 
     private void deleteCategory() {
-        System.out.println("                                    DELETE TRANSACTION                            ");
+        System.out.println("                                    DELETE CATEGORY                            ");
         System.out.println();
-        System.out.println("Inside the delete category");
+        int deleteOption = -1;
+
+        do {
+            try {
+                System.out.println();
+                System.out.println("Select a delete option for categories:");
+                System.out.println();
+                System.out.println("1. Search categories by ID");
+                System.out.println("2. Search categories by date");
+                System.out.println("3. Search categories by date range");
+                System.out.println("4. Get all categories");
+                System.out.println("\u001B[34m5. Back to main menu\u001B[0m");
+                System.out.println();
+                System.out.print("Enter your choice: ");
+
+
+                String input = scanner.nextLine();
+                System.out.println();
+
+                if (!input.matches("\\d+")) {
+                    System.out.println();
+                    System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                    System.out.println();
+                    continue;
+                }
+
+                deleteOption = Integer.parseInt(input);
+
+                switch (deleteOption) {
+                    case 1:
+
+                        break;
+                    case 2:
+
+                        break;
+                    case 3:
+
+                        break;
+                    case 4:
+
+                        break;
+                    case 5:
+                        System.out.println("                                      \u001BReturning to main menu...\u001B[0m");
+                        break;
+                    default:
+                        System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println();
+                System.out.println("Invalid input. Please enter a valid option number.");
+                System.out.println();
+                deleteOption = -1;
+            }
+        } while (deleteOption != 5);
     }
+
 
     private void search() {
         System.out.println("                                    SEARCH TRANSACTION                            ");
         System.out.println();
-        System.out.println("Inside the search");
+        System.out.println();
+
+        int searchOption;
+        do {
+            System.out.println();
+            System.out.println("Select a search option:");
+            System.out.println();
+            System.out.println("1. Search transactions");
+            System.out.println("2. Search categories");
+            System.out.println("\u001B[34m5. Back to main menu\u001B[0m");
+            System.out.println();
+            System.out.print("Enter your choice: ");
+
+            searchOption = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (searchOption) {
+                case 1:
+
+                    break;
+                case 2:
+
+                    break;
+                case 5:
+                    System.out.println();
+                    System.out.println("                                      \u001BReturning to main menu...\u001B[0m");
+                    System.out.println();
+                    break;
+                default:
+                    System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+            }
+        } while (searchOption != 5);
     }
 
     private void help() {
