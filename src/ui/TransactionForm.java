@@ -154,7 +154,15 @@ public class TransactionForm {
                     case 1:
                         TransactionNode transactionNode = transactionForm.getTransactionById();
                         if (transactionNode != null) {
-                            // Perform update operation on transactionNode.getData()
+                            System.out.println();
+                            System.out.println("selected Transaction by ID details:");
+                            System.out.println();
+                            System.out.println("Transaction ID: " +transactionNode.getData().getTransactionID());
+                            System.out.println("Transaction Description: " +transactionNode.getData().getDescription());
+                            System.out.println("Transaction Category: " +transactionNode.getData().getAmount());
+                            System.out.println("Transaction Category: " +transactionNode.getData().getCategory());
+                            System.out.println("Transaction Category: " +transactionNode.getData().getDateTime());
+                            System.out.println();
                         }
                         break;
 
