@@ -10,9 +10,11 @@ import transaction.TransactionNode;
 import utils.DataManipulationUtils;
 import utils.ValidationUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -78,33 +80,178 @@ public class TransactionForm {
     }
 
 
-    public TransactionNode getTransactionById(){
-        System.out.print("Enter Transaction ID: ");
-        String id = scanner.next();
+    public void updateTransactionById() {
+        System.out.print("Enter Transaction ID to update: ");
+        String transactionId = scanner.nextLine();
         System.out.println();
-        if(id.isEmpty()){
-            System.out.println("you enter Empty Transaction ID");
-        }else{
-            TransactionNode transactionNode = transactionLinkedList.getTransactionById(id);
-            if(transactionNode == null){
-                System.out.println("invalid Transaction id");
-            }else{
-                return transactionNode;
-            }
+
+        TransactionNode transactionNodeToUpdate = transactionLinkedList.getTransactionById(transactionId);
+
+        if (transactionNodeToUpdate == null) {
+            System.out.println("Transaction not found with the given ID.");
+            return;
         }
 
-       return null;
+        Transaction existingTransaction = transactionNodeToUpdate.getData();
+
+        System.out.println("Current Transaction Details:");
+        System.out.println("Old Amount: " + existingTransaction.getAmount());
+        System.out.println("Old Description: " + existingTransaction.getDescription());
+        System.out.println("Old Category: " + existingTransaction.getCategory());
+        System.out.println("Old Date and Time: " + existingTransaction.getDateTime());
+        System.out.println("Is Income: " + (existingTransaction.isIncome() ? "Yes" : "No"));
+        System.out.println();
+
+        System.out.println("Enter updated values (press enter to skip):");
+
+        System.out.print("New Amount: ");
+        double updatedAmount = getAmountFromUser();
+
+        System.out.print("New Description: ");
+        String updatedDescription = scanner.nextLine().trim();
+        if (updatedDescription.isEmpty()) {
+            updatedDescription = existingTransaction.getDescription();
+        }
+
+        System.out.print("New Category: ");
+        Category updatedCategory = getCategoryFromUser();
+
+        LocalDateTime updatedDateTime = getDateTimeFromUser();
+
+        boolean updatedIsIncome = isIncomeTransaction();
+
+        Transaction updatedTransaction = new Transaction(updatedAmount, updatedDescription, updatedCategory, updatedDateTime, updatedIsIncome);
+
+        transactionLinkedList.updateTransactionById(transactionId, updatedTransaction);
+
+        System.out.println("Transaction updated successfully.");
+        System.out.println();
     }
 
 
-    public List<TransactionNode> searchTransactionsByDate() {
-        System.out.print("Enter date to search (YYYY-MM-DD): ");
-        String dateString = scanner.nextLine();
-        // Validate and convert dateString if needed
+    public void updateTransactionByDate() {
+        System.out.print("Enter transaction date (yyyy-MM-dd) to update: ");
+        String transactionDateStr = scanner.nextLine();
+        System.out.println();
 
-        return transactionLinkedList.getTransactionByDate(dateString, "yyyy-MM-dd");
+        LocalDate transactionDate;
+        try {
+            transactionDate = LocalDate.parse(transactionDateStr);
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+            return;
+        }
+
+        LocalDateTime startOfDay = transactionDate.atStartOfDay();
+        List<TransactionNode> matchingTransactions = transactionLinkedList.getTransactionsByDate(LocalDate.from(startOfDay));
+
+        if (matchingTransactions.isEmpty()) {
+            System.out.println("No transactions found with the given date.");
+            return;
+        }
+
+        if (matchingTransactions.size() > 1) {
+            System.out.println("Multiple transactions found with the same date. Please choose a specific transaction:");
+            for (int i = 0; i < matchingTransactions.size(); i++) {
+                System.out.println((i + 1) + ". " + matchingTransactions.get(i).getData().getDescription());
+            }
+
+            System.out.print("Enter the number of the transaction to update: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            if (choice < 1 || choice > matchingTransactions.size()) {
+                System.out.println("Invalid choice.");
+                return;
+            }
+
+            TransactionNode selectedNode = matchingTransactions.get(choice - 1);
+            updateTransactionDetails(selectedNode.getData());
+        } else {
+            updateTransactionDetails(matchingTransactions.get(0).getData());
+        }
     }
 
+
+
+
+    public void updateTransactionByDateRange() {
+        System.out.print("Enter start date (yyyy-MM-dd) for the date range: ");
+        String startDateStr = scanner.nextLine();
+        System.out.println();
+
+        System.out.print("Enter end date (yyyy-MM-dd) for the date range: ");
+        String endDateStr = scanner.nextLine();
+        System.out.println();
+
+        LocalDate startDate, endDate;
+        try {
+            startDate = LocalDate.parse(startDateStr);
+            endDate = LocalDate.parse(endDateStr);
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+            return;
+        }
+
+        if (startDate.isAfter(endDate)) {
+            System.out.println("Start date must be before the end date.");
+            return;
+        }
+
+        LocalDateTime startDateInLocalDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateInLocalDateTime = endDate.atStartOfDay();
+        List<TransactionNode> transactionsInRange = transactionLinkedList.getTransactionsByDateRange(startDateInLocalDateTime, endDateInLocalDateTime);
+
+        if (transactionsInRange.isEmpty()) {
+            System.out.println("No transactions found within the specified date range.");
+            return;
+        }
+
+        System.out.println("Transactions found within the specified date range:");
+        for (int i = 0; i < transactionsInRange.size(); i++) {
+            System.out.println((i + 1) + ". " + transactionsInRange.get(i).getData().getDescription());
+        }
+
+        System.out.print("Enter the number of the transaction to update: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        if (choice < 1 || choice > transactionsInRange.size()) {
+            System.out.println("Invalid choice.");
+            return;
+        }
+
+        TransactionNode selectedNode = transactionsInRange.get(choice - 1);
+        updateTransactionDetails(selectedNode.getData());
+    }
+
+
+
+    public void updateAllTransactions() {
+        List<TransactionNode> allTransactions = transactionLinkedList.getAllTransactions();
+
+        if (allTransactions.isEmpty()) {
+            System.out.println("No transactions found.");
+            return;
+        }
+
+        System.out.println("All Transactions:");
+        for (int i = 0; i < allTransactions.size(); i++) {
+            System.out.println((i + 1) + ". " + allTransactions.get(i).getData().getDescription());
+        }
+
+        System.out.print("Enter the number of the transaction to update: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        if (choice < 1 || choice > allTransactions.size()) {
+            System.out.println("Invalid choice.");
+            return;
+        }
+
+        TransactionNode selectedNode = allTransactions.get(choice - 1);
+        updateTransactionDetails(selectedNode.getData());
+    }
 
     public List<TransactionNode> searchTransactionsByDateRange() {
         System.out.print("Enter start date (YYYY-MM-DD): ");
@@ -113,108 +260,47 @@ public class TransactionForm {
 
         System.out.print("Enter end date (YYYY-MM-DD): ");
         String endDateString = scanner.nextLine();
-        // Validate and convert endDateString if needed
 
         return transactionLinkedList.getTransactionsByDateRange(startDateString, endDateString, "yyyy-MM-dd");
     }
 
 
-    private void updateTransaction() {
-        System.out.println("                                    UPDATE TRANSACTION                            ");
+    private void updateTransactionDetails(Transaction existingTransaction) {
+        System.out.println("Current Transaction Details:");
+        System.out.println("Old Amount: " + existingTransaction.getAmount());
+        System.out.println("Old Description: " + existingTransaction.getDescription());
+        System.out.println("Old Category: " + existingTransaction.getCategory());
+        System.out.println("Old Date and Time: " + existingTransaction.getDateTime());
+        System.out.println("Is Income: " + (existingTransaction.isIncome() ? "Yes" : "No"));
         System.out.println();
-        TransactionForm transactionForm = new TransactionForm(categoryLinkedList, transactionLinkedList);
 
-        int updateOption = -1;
+        System.out.println("Enter updated values (press enter to skip):");
 
-        do {
-            try {
-                System.out.println();
-                System.out.println("Select an update option:");
-                System.out.println();
-                System.out.println("1. Search transaction by ID");
-                System.out.println("2. Search transaction by date");
-                System.out.println("3. Search transaction by date range");
-                System.out.println("4. Get all transactions");
-                System.out.println("\u001B[34m5. Back to main menu\u001B[0m");
-                System.out.println();
-                System.out.println();
-                System.out.print("Enter your choice: ");
+        double updatedAmount = getAmountFromUser();
 
-                String input = scanner.nextLine();
-                System.out.println();
+        System.out.print("New Description: ");
+        String updatedDescription = scanner.nextLine().trim();
+        if (updatedDescription.isEmpty()) {
+            updatedDescription = existingTransaction.getDescription();
+        }
 
-                if (!input.matches("\\d+")) {
-                    System.out.println();
-                    System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
-                    System.out.println();
-                    continue;
-                }
+        Category updatedCategory = getCategoryFromUser();
 
-                updateOption = Integer.parseInt(input);
+        LocalDateTime updatedDateTime = getDateTimeFromUser();
 
-                switch (updateOption) {
-                    case 1:
-                        TransactionNode transactionNode = transactionForm.getTransactionById();
-                        if (transactionNode != null) {
-                            System.out.println();
-                            System.out.println("selected Transaction by ID details:");
-                            System.out.println();
-                            System.out.println("Transaction ID: " +transactionNode.getData().getTransactionID());
-                            System.out.println("Transaction Description: " +transactionNode.getData().getDescription());
-                            System.out.println("Transaction Category: " +transactionNode.getData().getAmount());
-                            System.out.println("Transaction Category: " +transactionNode.getData().getCategory());
-                            System.out.println("Transaction Category: " +transactionNode.getData().getDateTime());
-                            System.out.println();
-                        }
-                        break;
+        boolean updatedIsIncome = isIncomeTransaction();
 
-                    case 2:
-                        List<TransactionNode> transactionsByDate = transactionForm.searchTransactionsByDate();
-                        if (!transactionsByDate.isEmpty()) {
-                            TransactionNode selectedTransactionByDate = transactionForm.selectTransaction(transactionsByDate);
-                            if (selectedTransactionByDate != null) {
-                                // Perform update operation on selectedTransactionByDate.getData()
-                            }
-                        }
-                        break;
+        Transaction updatedTransaction = new Transaction(updatedAmount, updatedDescription, updatedCategory, updatedDateTime, updatedIsIncome);
 
-                    case 3:
-                        List<TransactionNode> transactionsByDateRange = transactionForm.searchTransactionsByDateRange();
-                        if (!transactionsByDateRange.isEmpty()) {
-                            TransactionNode selectedTransactionByDateRange = transactionForm.selectTransaction(transactionsByDateRange);
-                            if (selectedTransactionByDateRange != null) {
-                                // Perform update operation on selectedTransactionByDateRange.getData()
-                            }
-                        }
-                        break;
+        transactionLinkedList.updateTransactionById(existingTransaction.getTransactionID(), updatedTransaction);
 
-                    case 4:
-                        List<TransactionNode> allTransactions = transactionLinkedList.getAllTransactions();
-                        if (!allTransactions.isEmpty()) {
-                            TransactionNode selectedTransaction = transactionForm.selectTransaction(allTransactions);
-                            if (selectedTransaction != null) {
-                                // Perform update operation on selectedTransaction.getData()
-                            }
-                        }
-                        break;
-
-                    case 5:
-                        System.out.println();
-                        System.out.println("                                      \u001B[34mReturning to main menu...\u001B[0m");
-                        System.out.println();
-                        break;
-
-                    default:
-                        System.out.println();
-                        System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
-                        System.out.println();
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid option number.");
-                updateOption = -1;
-            }
-        } while (updateOption != 5);
+        System.out.println("Transaction updated successfully.");
+        System.out.println();
     }
+
+
+
+
 
 
     private double getAmountFromUser() {
@@ -345,6 +431,8 @@ public class TransactionForm {
             categoryLinkedList.getCategoryByName(categoryName).getData().setBudget(categoryLinkedList.getCategoryByName(categoryName).getData().getBudget() - this.amount);
         }
     }
+
+
 
     private boolean isIncomeTransaction() {
         System.out.print("Is it an income or expense? (type \"INC\" for income, \"EXP\" for expense): ");
