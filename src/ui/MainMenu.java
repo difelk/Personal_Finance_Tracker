@@ -80,10 +80,6 @@ public class MainMenu {
         }
     }
 
-
-
-
-
     private void addTransaction() {
         System.out.println("                                    ADD TRANSACTION                            ");
         System.out.println();
@@ -112,7 +108,6 @@ public class MainMenu {
                 System.out.println();
                 System.out.print("Enter your choice: ");
 
-
                 String input = scanner.nextLine();
                 System.out.println();
 
@@ -127,10 +122,10 @@ public class MainMenu {
 
                 switch (updateOption) {
                     case 1:
-                        transactionForm.getTransactionById();
+                        transactionForm.updateTransactionById();
                         break;
                     case 2:
-                        transactionForm.searchTransactionsByDate();
+                        transactionForm.updateTransactionByDate();
                         break;
                     case 3:
                         transactionForm.searchTransactionsByDateRange();
@@ -357,8 +352,8 @@ public class MainMenu {
             System.out.println();
             System.out.println("Select a search option:");
             System.out.println();
-            System.out.println("1. Search transactions");
-            System.out.println("2. Search categories");
+            System.out.println("01. Search transactions");
+            System.out.println("02. Search categories");
             System.out.println("\u001B[34m5. Back to main menu\u001B[0m");
             System.out.println();
             System.out.print("Enter your choice: ");
