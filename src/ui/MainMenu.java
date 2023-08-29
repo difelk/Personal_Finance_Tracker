@@ -85,7 +85,7 @@ public class MainMenu {
 
 
     private void addTransaction() {
-        System.out.println("                                    ADD TRANSACTION                            ");
+        System.out.println("\u001B[33m                                    ADD TRANSACTION                            \u001B[0m");
         System.out.println();
         TransactionForm transactionForm = new TransactionForm(categoryLinkedList, transactionLinkedList);
         transactionForm.displayTransactionForm();
@@ -93,7 +93,7 @@ public class MainMenu {
 
 
     private void updateTransaction() {
-        System.out.println("                                    UPDATE TRANSACTION                            ");
+        System.out.println("\u001B[33m                                    UPDATE TRANSACTION                          \u001B[0m");
         System.out.println();
         TransactionForm transactionForm = new TransactionForm(categoryLinkedList, transactionLinkedList);
         int updateOption = -1;;
@@ -156,7 +156,7 @@ public class MainMenu {
     }
 
     private void deleteTransaction() {
-        System.out.println("                                    DELETE TRANSACTION                            ");
+        System.out.println("\u001B[33m                                    DELETE TRANSACTION                          \u001B[0m");
         System.out.println();
         int deleteOption = -1;
 
@@ -216,7 +216,7 @@ public class MainMenu {
 
 
     private void addCategory() {
-        System.out.println("                                    ADD CATEGORY                            ");
+        System.out.println("\u001B[32m                                    ADD CATEGORY                            \u001B[0m");
         System.out.println();
         CategoryForm categoryFrom = new CategoryForm(categoryLinkedList);
 //        CategoryForm categoryFrom = new CategoryForm();
@@ -224,7 +224,7 @@ public class MainMenu {
     }
 
     private void updateCategory() {
-        System.out.println("                                    UPDATE CATEGORY                            ");
+        System.out.println("\u001B[32m                                    UPDATE CATEGORY                          \u001B[0m");
         System.out.println();
         int updateOption = -1;
 
@@ -288,7 +288,7 @@ public class MainMenu {
     }
 
     private void deleteCategory() {
-        System.out.println("                                    DELETE CATEGORY                            ");
+        System.out.println("\u001B[32m                                    DELETE CATEGORY                          \u001B[0m");
         System.out.println();
         int deleteOption = -1;
 
@@ -348,7 +348,10 @@ public class MainMenu {
 
 
     private void search() {
-        System.out.println("                                    SEARCH TRANSACTION                            ");
+        TransactionForm transactionForm = new TransactionForm(categoryLinkedList, transactionLinkedList);
+        CategoryForm categoryForm = new CategoryForm(categoryLinkedList);
+
+        System.out.println("\u001B[34m                                    SEARCH TRANSACTION                            \u001B[0m");
         System.out.println();
         System.out.println();
 
@@ -357,8 +360,8 @@ public class MainMenu {
             System.out.println();
             System.out.println("Select a search option:");
             System.out.println();
-            System.out.println("1. Search transactions");
-            System.out.println("2. Search categories");
+            System.out.println("\u001B[35m1. Search transactions\u001B[0m");
+            System.out.println("\u001B[35m2. Search categories\u001B[0m");
             System.out.println("\u001B[34m5. Back to main menu\u001B[0m");
             System.out.println();
             System.out.print("Enter your choice: ");
@@ -368,10 +371,10 @@ public class MainMenu {
 
             switch (searchOption) {
                 case 1:
-
+                    transactionForm.getAllTransaction(transactionLinkedList);
                     break;
                 case 2:
-
+                    categoryForm.getAllCategories(categoryLinkedList);
                     break;
                 case 5:
                     System.out.println();
@@ -385,7 +388,7 @@ public class MainMenu {
     }
 
     private void help() {
-        System.out.println("                                    HELP TRANSACTION                            ");
+        System.out.println("\u001B[34m                                    HELP TRANSACTION                            \u001B[0m");
         System.out.println();
         System.out.println("Inside the help");
     }
