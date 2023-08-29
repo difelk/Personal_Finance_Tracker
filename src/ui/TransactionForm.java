@@ -298,6 +298,43 @@ public class TransactionForm {
         System.out.println();
     }
 
+    public void getAllTransaction(TransactionLinkedList transactionLinkedList){
+        List<TransactionNode> transactionNodes = transactionLinkedList.getAllTransactions();
+
+        try{
+            if(transactionLinkedList.isEmpty()){
+                System.out.println();
+                System.out.println("\u001B[31mNo Transaction details to display\u001B[0m");
+            }
+            else {
+                for (int i = 0; i < transactionNodes.size(); i++) {
+                    System.out.println((i+1) + ". Description: " + transactionNodes.get(i).getData().getDescription());
+                    System.out.println("   Category: " + transactionNodes.get(i).getData().getCategory());
+                }
+                System.out.println();
+                System.out.print("Enter selected Category no: ");
+                int selectedNo = scanner.nextInt();
+
+                System.out.println();
+
+                if (selectedNo < 1 || selectedNo > transactionNodes.size()) {
+                    System.out.println("Selected number is invalid");
+                    return;
+                }
+
+                System.out.println();
+                System.out.println("Selected Transaction Details");
+                System.out.println();
+
+                System.out.println("Transaction Description: " + transactionNodes.get(selectedNo - 1).getData().getDescription());
+                System.out.println("Transaction Category: " + transactionNodes.get(selectedNo - 1).getData().getCategory());
+                System.out.println("Transaction Date & Time: " + transactionNodes.get(selectedNo - 1).getData().getDateTime());
+            }
+        }
+        catch (NullPointerException e){
+            System.out.println(e);
+        }
+    }
 
 
 
