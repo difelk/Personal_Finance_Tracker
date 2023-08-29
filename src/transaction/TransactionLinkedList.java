@@ -146,6 +146,48 @@ public class TransactionLinkedList {
         return transactionNodes;
     }
 
+
+    public void deleteTransactionById(String transactionId) {
+        if (isEmpty()) {
+            System.out.println("No transactions to delete.");
+            return;
+        }
+
+        if (head.getData().getTransactionID().equals(transactionId)) {
+            head = head.getNextRef();
+            System.out.println("Transaction deleted successfully.");
+            return;
+        }
+
+        TransactionNode currentNode = head;
+        TransactionNode prevNode = currentNode;
+
+        while (currentNode != null) {
+            if (currentNode.getData().getTransactionID().equals(transactionId)) {
+                prevNode.setNextRef(currentNode.getNextRef());
+                System.out.println("Transaction deleted successfully.");
+                return;
+            }
+            prevNode = currentNode;
+            currentNode = currentNode.getNextRef();
+        }
+
+        // Transaction not found with the given ID
+        System.out.println("Transaction not found with the given ID.");
+    }
+
+
+    public void deleteAllTransactions() {
+        if (isEmpty()) {
+            System.out.println("No transactions to delete.");
+            return;
+        }
+
+        head = null;
+        System.out.println("All transactions deleted successfully.");
+    }
+
+
     public boolean isEmpty(){
         return this.head == null;
     }

@@ -15,7 +15,7 @@ public class MainMenu {
 
     public void displayMenu() {
         CategoryForm categoryForm = new CategoryForm(categoryLinkedList);
-        categoryForm.hardCodedCategoryForm(categoryLinkedList);
+        categoryForm.hardCodedCategoryForm(categoryLinkedList, transactionLinkedList);
 
 
         do {
@@ -131,7 +131,7 @@ public class MainMenu {
                         transactionForm.searchTransactionsByDateRange();
                         break;
                     case 4:
-//                        transactionForm.getAllTransactions();
+                        transactionForm.updateAllTransactions();
                         break;
                     case 5:
                         System.out.println();
@@ -153,6 +153,7 @@ public class MainMenu {
     private void deleteTransaction() {
         System.out.println("\u001B[33m                                    DELETE TRANSACTION                          \u001B[0m");
         System.out.println();
+        TransactionForm transactionForm = new TransactionForm(categoryLinkedList, transactionLinkedList);
         int deleteOption = -1;
 
         do {
@@ -183,16 +184,16 @@ public class MainMenu {
 
                 switch (deleteOption) {
                     case 1:
-                        // Implement search transaction by ID and delete
+                        transactionForm.deleteTransactionById();
                         break;
                     case 2:
-                        // Implement search transaction by date and delete
+                        transactionForm.deleteTransactionByDate();
                         break;
                     case 3:
-                        // Implement search transaction by date range and delete
+                        transactionForm.deleteTransactionByDateRange();
                         break;
                     case 4:
-                        // Implement get all transactions and delete
+                        transactionForm.deleteAllTransactions();
                         break;
                     case 5:
                         System.out.println("                                      \u001BReturning to main menu...\u001B[0m");
