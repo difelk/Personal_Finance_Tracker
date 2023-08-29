@@ -288,6 +288,43 @@ import java.util.Scanner;
          System.out.println();
      }
 
+     public void getAllCategories(CategoryLinkedList categoryLinkedList){
+        List<CategoryNode> categoryNodes = categoryLinkedList.getAllCategories();
+
+        try{
+            if(categoryLinkedList.isEmpty()){
+                System.out.println();
+                System.out.println("\u001B[31mNo Category details to display\u001B[0m");
+            }
+            else{
+                System.out.println();
+                for (int i = 0; i < categoryNodes.size();i++) {
+                    System.out.println((i+1) + ". " + categoryNodes.get(i).getData().getName());
+                }
+                System.out.println();
+                System.out.print("Enter selected Category no: ");
+                int selectedNo = scanner.nextInt();
+
+                System.out.println();
+
+                if(selectedNo < 1 || selectedNo > categoryNodes.size()){
+                    System.out.println("Selected number is invalid");
+                    return;
+                }
+                System.out.println();
+                System.out.println("Selected Category Details");
+                System.out.println();
+
+                System.out.println("Category Name: " + categoryNodes.get(selectedNo - 1).getData().getName());
+                System.out.println("Category Description: " + categoryNodes.get(selectedNo - 1).getData().getDescription());
+                System.out.println("Category Budget: " + categoryNodes.get(selectedNo - 1).getData().getBudget());
+                System.out.println("Category Created Date: " + categoryNodes.get(selectedNo - 1).getData().getCreationDate());
+            }
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+     }
 
      private boolean validateCategory(Category category) {
         if (category.getName().isEmpty()) {
