@@ -13,7 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class Transaction {
-    public TransactionLinkedList transactionLinkedList;
     private String transactionID;
     private double amount;
     private String description;
@@ -28,7 +27,7 @@ public class Transaction {
         this.description = description;
         this.category = category;
         this.isIncome = isIncome;
-        this.dateTime = ZonedDateTime.from(LocalDateTime.now()).toLocalDateTime();
+        this.dateTime = LocalDateTime.now();
     }
 
     public Transaction(double amount, String description, Category category, LocalDateTime dateTime, boolean isIncome) {

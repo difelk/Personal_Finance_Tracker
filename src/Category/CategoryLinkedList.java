@@ -71,7 +71,7 @@ public class CategoryLinkedList {
 
         if(!isEmpty()){
             while (currentNode != null) {
-                if (currentNode.getData().getName().equals(categoryName)) {
+                if (currentNode.getData().getName().toLowerCase().trim().equals(categoryName.toLowerCase().trim())) {
                     return currentNode;
                 }
                 currentNode = currentNode.getNextRef();

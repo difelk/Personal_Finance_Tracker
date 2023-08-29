@@ -3,6 +3,8 @@ package ui;
 import Category.Category;
 import Category.CategoryNode;
 import Category.CategoryLinkedList;
+import transaction.Transaction;
+import transaction.TransactionLinkedList;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,13 +22,13 @@ import java.util.Scanner;
         this.scanner = new Scanner(System.in);
     }
 
-     public void hardCodedCategoryForm(CategoryLinkedList categoryLinkedListMain) {
+     public void hardCodedCategoryForm(CategoryLinkedList categoryLinkedListMain, TransactionLinkedList TransactionLinkedlistHC) {
 
          LocalDateTime creationDateTime = LocalDateTime.now();
 
-         Category category1 = new Category("Groceries", "Grocery expenses", 200, creationDateTime);
-         Category category2 = new Category("Entertainment", "Entertainment expenses", 100, creationDateTime);
-         Category category3 = new Category("Transportation", "Transportation expenses", 150, creationDateTime);
+         Category category1 = new Category("Groceries", "Grocery expenses", 20000, creationDateTime);
+         Category category2 = new Category("Entertainment", "Entertainment expenses", 10000, creationDateTime);
+         Category category3 = new Category("Transportation", "Transportation expenses", 15000, creationDateTime);
 
          if (!categoryLinkedListMain.isCategoryExists(category1.getName())) {
              categoryLinkedListMain.addCategory(category1);
@@ -39,6 +41,15 @@ import java.util.Scanner;
          if (!categoryLinkedListMain.isCategoryExists(category3.getName())) {
              categoryLinkedListMain.addCategory(category3);
          }
+
+        Transaction transaction1 = new Transaction(5000, "Once a month grocery", categoryLinkedListMain.getCategoryByName("Groceries").getData(),false);
+        Transaction transaction2 = new Transaction(8500, "Watched a Movie", categoryLinkedListMain.getCategoryByName("Entertainment").getData(), false);
+        Transaction transaction3 = new Transaction(550, "Transportation expenses for office", categoryLinkedListMain.getCategoryByName("Transportation").getData(), false);
+
+        TransactionLinkedlistHC.addTransaction(transaction1);
+         TransactionLinkedlistHC.addTransaction(transaction2);
+         TransactionLinkedlistHC.addTransaction(transaction3);
+
 
      }
     public void displayCategoryForm() {
@@ -135,7 +146,7 @@ import java.util.Scanner;
 
          categoryLinkedList.updateCategoryByName(categoryName, updatedCategory);
 
-         System.out.println("Category updated successfully.");
+         System.out.println("\u001B[34mCategory updated successfully.\u001B[0m");
          System.out.println();
      }
 
@@ -284,7 +295,7 @@ import java.util.Scanner;
 
          categoryLinkedList.updateCategoryByName(existingCategory.getName(), updatedCategory);
 
-         System.out.println("Category updated successfully.");
+         System.out.println("\u001B[34mCategory updated successfully.\u001B[0m");
          System.out.println();
      }
 

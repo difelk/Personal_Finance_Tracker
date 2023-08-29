@@ -31,6 +31,7 @@ public class TransactionForm {
      private String categoryName = null;
     private boolean isIncome;
 
+
     public TransactionForm(CategoryLinkedList categoryLinkedList, TransactionLinkedList transactionLinkedList) {
         this.categoryLinkedList = categoryLinkedList;
         this.transactionLinkedList = transactionLinkedList;
@@ -173,58 +174,55 @@ public class TransactionForm {
     }
 
 
-
-
-    public void updateTransactionByDateRange() {
-        System.out.print("Enter start date (yyyy-MM-dd) for the date range: ");
-        String startDateStr = scanner.nextLine();
-        System.out.println();
-
-        System.out.print("Enter end date (yyyy-MM-dd) for the date range: ");
-        String endDateStr = scanner.nextLine();
-        System.out.println();
-
-        LocalDate startDate, endDate;
-        try {
-            startDate = LocalDate.parse(startDateStr);
-            endDate = LocalDate.parse(endDateStr);
-        } catch (DateTimeParseException e) {
-            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
-            return;
-        }
-
-        if (startDate.isAfter(endDate)) {
-            System.out.println("Start date must be before the end date.");
-            return;
-        }
-
-        LocalDateTime startDateInLocalDateTime = startDate.atStartOfDay();
-        LocalDateTime endDateInLocalDateTime = endDate.atStartOfDay();
-        List<TransactionNode> transactionsInRange = transactionLinkedList.getTransactionsByDateRange(startDateInLocalDateTime, endDateInLocalDateTime);
-
-        if (transactionsInRange.isEmpty()) {
-            System.out.println("No transactions found within the specified date range.");
-            return;
-        }
-
-        System.out.println("Transactions found within the specified date range:");
-        for (int i = 0; i < transactionsInRange.size(); i++) {
-            System.out.println((i + 1) + ". " + transactionsInRange.get(i).getData().getDescription());
-        }
-
-        System.out.print("Enter the number of the transaction to update: ");
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-
-        if (choice < 1 || choice > transactionsInRange.size()) {
-            System.out.println("Invalid choice.");
-            return;
-        }
-
-        TransactionNode selectedNode = transactionsInRange.get(choice - 1);
-        updateTransactionDetails(selectedNode.getData());
-    }
-
+//    public void updateTransactionByDateRange() {
+//        System.out.print("Enter start date (yyyy-MM-dd) for the date range: ");
+//        String startDateStr = scanner.nextLine();
+//        System.out.println();
+//
+//        System.out.print("Enter end date (yyyy-MM-dd) for the date range: ");
+//        String endDateStr = scanner.nextLine();
+//        System.out.println();
+//
+//        LocalDate startDate, endDate;
+//        try {
+//            startDate = LocalDate.parse(startDateStr);
+//            endDate = LocalDate.parse(endDateStr);
+//        } catch (DateTimeParseException e) {
+//            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+//            return;
+//        }
+//
+//        if (startDate.isAfter(endDate)) {
+//            System.out.println("Start date must be before the end date.");
+//            return;
+//        }
+//
+//        LocalDateTime startDateInLocalDateTime = startDate.atStartOfDay();
+//        LocalDateTime endDateInLocalDateTime = endDate.atStartOfDay();
+//        List<TransactionNode> transactionsInRange = transactionLinkedList.getTransactionsByDateRange(startDateInLocalDateTime, endDateInLocalDateTime);
+//
+//        if (transactionsInRange.isEmpty()) {
+//            System.out.println("No transactions found within the specified date range.");
+//            return;
+//        }
+//
+//        System.out.println("Transactions found within the specified date range:");
+//        for (int i = 0; i < transactionsInRange.size(); i++) {
+//            System.out.println((i + 1) + ". " + transactionsInRange.get(i).getData().getDescription());
+//        }
+//
+//        System.out.print("Enter the number of the transaction to update: ");
+//        int choice = scanner.nextInt();
+//        scanner.nextLine();
+//
+//        if (choice < 1 || choice > transactionsInRange.size()) {
+//            System.out.println("Invalid choice.");
+//            return;
+//        }
+//
+//        TransactionNode selectedNode = transactionsInRange.get(choice - 1);
+//        updateTransactionDetails(selectedNode.getData());
+//    }
 
 
     public void updateAllTransactions() {
@@ -274,8 +272,8 @@ public class TransactionForm {
         System.out.println("Is Income: " + (existingTransaction.isIncome() ? "Yes" : "No"));
         System.out.println();
 
-        System.out.println("Enter updated values (press enter to skip):");
-
+        System.out.println("Enter updated values below (press enter to skip):");
+        System.out.println("Enter New Amount:");
         double updatedAmount = getAmountFromUser();
 
         System.out.print("New Description: ");
@@ -283,7 +281,7 @@ public class TransactionForm {
         if (updatedDescription.isEmpty()) {
             updatedDescription = existingTransaction.getDescription();
         }
-
+        System.out.println("Enter Category:");
         Category updatedCategory = getCategoryFromUser();
 
         LocalDateTime updatedDateTime = getDateTimeFromUser();
@@ -338,7 +336,187 @@ public class TransactionForm {
 
 
 
+    public void deleteTransactionById() {
+        System.out.print("Enter Transaction ID to delete: ");
+        String transactionId = scanner.nextLine();
+        System.out.println();
 
+        TransactionNode transactionNodeToDelete = transactionLinkedList.getTransactionById(transactionId);
+
+        if (transactionNodeToDelete == null) {
+            System.out.println("Transaction not found with the given ID.");
+            return;
+        }
+
+        Transaction transactionToDelete = transactionNodeToDelete.getData();
+
+        System.out.println("Transaction Details to Delete:");
+        System.out.println("Amount: " + transactionToDelete.getAmount());
+        System.out.println("Description: " + transactionToDelete.getDescription());
+        System.out.println("Category: " + transactionToDelete.getCategory());
+        System.out.println("Date and Time: " + transactionToDelete.getDateTime());
+        System.out.println("Is Income: " + (transactionToDelete.isIncome() ? "Yes" : "No"));
+        System.out.println();
+
+        if (confirmDeletion(transactionToDelete)) {
+            transactionLinkedList.deleteTransactionById(transactionId);
+            System.out.println("Transaction deleted successfully.");
+        } else {
+            System.out.println("Transaction not deleted.");
+        }
+        System.out.println();
+    }
+
+
+    public void deleteTransactionByDate() {
+        System.out.print("Enter transaction date (yyyy-MM-dd): ");
+        String transactionDateStr = scanner.nextLine();
+        LocalDate transactionDate;
+
+        try {
+            transactionDate = LocalDate.parse(transactionDateStr);
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+            return;
+        }
+
+        LocalDateTime startOfDay = transactionDate.atStartOfDay();
+        List<TransactionNode> matchingTransactions = transactionLinkedList.getTransactionsByDate(startOfDay.toLocalDate());
+
+        if (matchingTransactions.isEmpty()) {
+            System.out.println("No transactions found with the given date.");
+            return;
+        }
+
+        TransactionNode selectedNode = selectTransaction(matchingTransactions);
+        if (selectedNode != null) {
+            System.out.println("Transaction Details:");
+            displayTransactionDetails(selectedNode.getData());
+
+            if (confirmDeletion(selectedNode.getData())) {
+                transactionLinkedList.deleteTransactionById(selectedNode.getData().getTransactionID());
+                System.out.println("Transaction deleted successfully.");
+            } else {
+                System.out.println("Deletion canceled.");
+            }
+        }
+    }
+
+
+
+    public void deleteTransactionByDateRange() {
+        System.out.print("Enter start date (yyyy-MM-dd) for the date range: ");
+        String startDateStr = scanner.nextLine();
+
+        System.out.print("Enter end date (yyyy-MM-dd) for the date range: ");
+        String endDateStr = scanner.nextLine();
+
+        LocalDate startDate, endDate;
+
+        try {
+            startDate = LocalDate.parse(startDateStr);
+            endDate = LocalDate.parse(endDateStr);
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+            return;
+        }
+
+        if (startDate.isAfter(endDate)) {
+            System.out.println("Start date must be before the end date.");
+            return;
+        }
+
+        LocalDateTime startDateInLocalDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateInLocalDateTime = endDate.atStartOfDay();
+        List<TransactionNode> transactionsInRange = transactionLinkedList.getTransactionsByDateRange(startDateInLocalDateTime, endDateInLocalDateTime);
+
+        if (transactionsInRange.isEmpty()) {
+            System.out.println("No transactions found within the specified date range.");
+            return;
+        }
+
+        TransactionNode selectedNode = selectTransaction(transactionsInRange);
+        if (selectedNode != null) {
+            System.out.println("Transaction Details:");
+            displayTransactionDetails(selectedNode.getData());
+
+            if (confirmDeletion(selectedNode.getData())) {
+                transactionLinkedList.deleteTransactionById(selectedNode.getData().getTransactionID());
+                System.out.println("Transaction deleted successfully.");
+            } else {
+                System.out.println("Deletion canceled.");
+            }
+        }
+    }
+
+
+
+    public void deleteAllTransactions() {
+        List<TransactionNode> allTransactions = transactionLinkedList.getAllTransactions();
+
+        if (allTransactions.isEmpty()) {
+            System.out.println("No transactions found.");
+            return;
+        }
+
+        TransactionNode selectedNode = selectTransaction(allTransactions);
+
+        if (selectedNode != null) {
+            System.out.println("Transaction Details:");
+            displayTransactionDetails(selectedNode.getData());
+
+            if (confirmDeletion(selectedNode.getData())) {
+                transactionLinkedList.deleteTransactionById(selectedNode.getData().getTransactionID());
+                System.out.println("Transaction deleted successfully.");
+            } else {
+                System.out.println("Deletion canceled.");
+            }
+        }
+    }
+
+    private boolean confirmDeletion(Transaction transaction) {
+        Scanner scanner = new Scanner(System.in);
+        displayTransactionDetails(transaction);
+        System.out.print("Are you sure you want to delete this transaction? (yes/no): ");
+        String userInput = scanner.nextLine().trim().toLowerCase();
+        return userInput.equals("yes") || userInput.equals("y");
+    }
+
+//    private void deleteTransaction(TransactionNode transactionNode) {
+//        Transaction transactionToDelete = transactionNode.getData();
+//
+//        System.out.println("Transaction Details to Delete:");
+//        System.out.println("Amount: " + transactionToDelete.getAmount());
+//        System.out.println("Description: " + transactionToDelete.getDescription());
+//        System.out.println("Category: " + transactionToDelete.getCategory());
+//        System.out.println("Date and Time: " + transactionToDelete.getDateTime());
+//        System.out.println("Is Income: " + (transactionToDelete.isIncome() ? "Yes" : "No"));
+//        System.out.println();
+//
+//        System.out.print("Are you sure you want to delete this transaction? (yes/no): ");
+//        String confirmation = scanner.nextLine().toLowerCase();
+//
+//        if (confirmation.equals("yes") || confirmation.equals("y")) {
+//            transactionLinkedList.deleteTransactionById(transactionToDelete.getTransactionID());
+//            System.out.println("Transaction deleted successfully.");
+//        } else if (confirmation.equals("no") || confirmation.equals("n")) {
+//            System.out.println("Transaction not deleted.");
+//        } else {
+//            System.out.println("Invalid choice. Transaction not deleted.");
+//        }
+//        System.out.println();
+//    }
+
+    public void displayTransactionDetails(Transaction transaction){
+        System.out.println("Transaction Details to Delete:");
+        System.out.println("Amount: " + transaction.getAmount());
+        System.out.println("Description: " + transaction.getDescription());
+        System.out.println("Category: " + transaction.getCategory());
+        System.out.println("Date and Time: " + transaction.getDateTime());
+        System.out.println("Is Income: " + (transaction.isIncome() ? "INCOME" : "EXPENSES"));
+        System.out.println();
+
+    }
 
     private double getAmountFromUser() {
         double amount = -1;
@@ -355,7 +533,7 @@ public class TransactionForm {
                 amount = Double.parseDouble(amountInput);
                 isValid = true;
             } catch (NumberFormatException e) {
-                System.out.println("Invalid amount input. Please enter a valid number.");
+                System.out.print("Invalid amount input. Please enter a valid number.");
             }
         }
 
@@ -477,4 +655,5 @@ public class TransactionForm {
         this.isIncome = transactionType.equalsIgnoreCase("INC");
         return transactionType.equalsIgnoreCase("INC");
     }
+
 }
