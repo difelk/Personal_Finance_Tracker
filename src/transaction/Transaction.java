@@ -101,6 +101,27 @@ public class Transaction {
         return amount;
     }
 
+    public boolean isIncome() {
+        return isIncome;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
+    public void setIncome(boolean income) {
+        isIncome = income;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
     public LocalDateTime getDateTime() {
         return this.dateTime;
     }
@@ -111,5 +132,8 @@ public class Transaction {
 
     public void setDateTime(String dateTime, String formate) {
         this.dateTime = ZonedDateTime.from(dataManipulationUtils.ConvertDateStringToLocalDateTime(dateTime, formate)).toLocalDateTime();
+    }
+
+    public void setCategory(String category) {
     }
 }
