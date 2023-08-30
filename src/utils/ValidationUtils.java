@@ -48,7 +48,7 @@ public class ValidationUtils {
         }
     }
 
-    public boolean isITANumber(String value){
+    public static boolean isITANumber(String value){
        return value.matches("\\d+");
     }
 
