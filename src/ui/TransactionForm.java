@@ -273,6 +273,7 @@ public class TransactionForm {
 
     private void updateTransactionDetails(Transaction existingTransaction) {
         System.out.println("Current Transaction Details:");
+        System.out.println();
         System.out.println("Old Amount: " + existingTransaction.getAmount());
         System.out.println("Old Description: " + existingTransaction.getDescription());
         System.out.println("Old Category: " + existingTransaction.getCategory());
@@ -321,7 +322,7 @@ public class TransactionForm {
 
 
         Transaction newTransaction = new Transaction(updatedAmount, updatedDescription, updatedCategory, updatedDateTime, updatedIsIncome);
-        transactionLinkedList.addTransaction(newTransaction);
+        transactionLinkedList.updateTransactionById(existingTransaction.getTransactionID(),newTransaction);
         System.out.println();
         System.out.println("\u001B[34m=============================================================================================\u001B[0m");
         System.out.println("\u001B[34mTransaction Updated successfully.\u001B[0m");
@@ -399,7 +400,7 @@ public class TransactionForm {
                 System.out.println("Selected Transaction Details");
                 System.out.println();
 
-                String defaultTransactionId = "2023-01-0110:30transactionEXP";
+                String defaultTransactionId = "202301011030transactionEXP";
 
                 if(transactionNodes.get(selectedNo - 1).getData().getTransactionID() == null){
                     System.out.println("Transaction ID: " + defaultTransactionId);
@@ -407,6 +408,7 @@ public class TransactionForm {
                     System.out.println("Transaction Description: " + transactionNodes.get(selectedNo - 1).getData().getDescription());
                     System.out.println("Transaction Amount: " + transactionNodes.get(selectedNo - 1).getData().getAmount());
                     System.out.println("Transaction Date & Time: " + transactionNodes.get(selectedNo - 1).getData().getDateTime());
+                    System.out.println("Type: " + (transactionNodes.get(selectedNo - 1).getData().isIncome() ? "INCOME" : "EXPENSES"));
                 }
                 else {
                     System.out.println("Transaction ID: " + transactionNodes.get(selectedNo - 1).getData().getTransactionID());
@@ -414,6 +416,7 @@ public class TransactionForm {
                     System.out.println("Transaction Description: " + transactionNodes.get(selectedNo - 1).getData().getDescription());
                     System.out.println("Transaction Amount: " + transactionNodes.get(selectedNo - 1).getData().getAmount());
                     System.out.println("Transaction Date & Time: " + transactionNodes.get(selectedNo - 1).getData().getDateTime());
+                    System.out.println("Type: " + (transactionNodes.get(selectedNo - 1).getData().isIncome() ? "INCOME" : "EXPENSES"));
                 }
             }
         }
@@ -441,6 +444,7 @@ public class TransactionForm {
         Transaction transactionToDelete = transactionNodeToDelete.getData();
 
         System.out.println("Transaction Details to Delete:");
+        System.out.println();
         System.out.println("Amount: " + transactionToDelete.getAmount());
         System.out.println("Description: " + transactionToDelete.getDescription());
         System.out.println("Category: " + transactionToDelete.getCategory());
@@ -463,53 +467,66 @@ public class TransactionForm {
 
 
     public void deleteTransactionByDate() {
-        System.out.print("Enter transaction date (yyyy-MM-dd): ");
-        String transactionDateStr = scanner.nextLine();
-        LocalDate transactionDate;
-
-        try {
-            transactionDate = LocalDate.parse(transactionDateStr);
-        } catch (DateTimeParseException e) {
-            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
-            return;
-        }
-
-        LocalDateTime startOfDay = transactionDate.atStartOfDay();
-        List<TransactionNode> matchingTransactions = transactionLinkedList.getTransactionsByDate(startOfDay.toLocalDate());
-
-        if (matchingTransactions.isEmpty()) {
-            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
-            System.out.println("\u001B[31mNo transactions found with the given date.\u001B[0m");
-            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+        if(transactionLinkedList.getAllTransactions() != null){
+            System.out.print("Enter transaction date (yyyy-MM-dd): ");
+            String transactionDateStr = scanner.nextLine();
+            LocalDate transactionDate;
             System.out.println();
-            return;
-        }
+            try {
+                transactionDate = LocalDate.parse(transactionDateStr);
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+                return;
+            }
 
-        TransactionNode selectedNode = selectTransaction(matchingTransactions);
-        if (selectedNode != null) {
-            System.out.println("Transaction Details:");
-            displayTransactionDetails(selectedNode.getData());
+            LocalDateTime startOfDay = transactionDate.atStartOfDay();
+            List<TransactionNode> matchingTransactions = transactionLinkedList.getTransactionsByDate(startOfDay.toLocalDate());
 
-            if (confirmDeletion(selectedNode.getData())) {
-                transactionLinkedList.deleteTransactionById(selectedNode.getData().getTransactionID());
+            displayAllTransactionDetailsToDelete(matchingTransactions);
+            if (matchingTransactions.isEmpty()) {
+                System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+                System.out.println("\u001B[31mNo transactions found with the given date.\u001B[0m");
+                System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
                 System.out.println();
-                System.out.println("\u001B[34m=============================================================================================\u001B[0m");
-                System.out.println("\u001B[34mTransaction deleted successfully.\u001B[0m");
-                System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+                return;
+            }
+
+            TransactionNode selectedNode = selectTransaction(matchingTransactions);
+            if (selectedNode != null) {
                 System.out.println();
-            } else {
-                System.out.println("Deletion canceled.");
+                System.out.println("Transaction Details:");
+                System.out.println();
+                displayTransactionDetails(selectedNode.getData());
+
+                if (confirmDeletion(selectedNode.getData())) {
+                    transactionLinkedList.deleteTransactionById(selectedNode.getData().getTransactionID());
+                    System.out.println();
+                    System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+                    System.out.println("\u001B[34mTransaction deleted successfully.\u001B[0m");
+                    System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+                    System.out.println();
+                } else {
+                    System.out.println("Deletion canceled.");
+                }
             }
         }
+        else {
+            System.out.println();
+            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+            System.out.println("\u001B[31mNo transactions to display\u001B[0m");
+            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+            System.out.println();
+        }
+
     }
 
 
 
     public void deleteTransactionByDateRange() {
-        System.out.print("Enter start date (yyyy-MM-dd) for the date range: ");
+        System.out.print("Enter START date (yyyy-MM-dd) for the date range: ");
         String startDateStr = scanner.nextLine();
 
-        System.out.print("Enter end date (yyyy-MM-dd) for the date range: ");
+        System.out.print("Enter END date (yyyy-MM-dd) for the date range: ");
         String endDateStr = scanner.nextLine();
 
         LocalDate startDate, endDate;
@@ -564,23 +581,60 @@ public class TransactionForm {
 
 
     public void deleteAllTransactions() {
-        List<TransactionNode> allTransactions = transactionLinkedList.getAllTransactions();
 
-        if (allTransactions.isEmpty()) {
-            System.out.println();
-            System.out.println("No transactions found.");
-            System.out.println();
-            return;
+        if(transactionLinkedList.getAllTransactions() != null) {
+
+            List<TransactionNode> allTransactions = transactionLinkedList.getAllTransactions();
+
+            if (allTransactions.isEmpty()) {
+                System.out.println();
+                System.out.println("No transactions found.");
+                System.out.println();
+                return;
+            }
+            displayAllTransactionDetailsToDelete(allTransactions);
+                deleteSelectedTransaction(allTransactions);
         }
+        else {
+            System.out.println();
+            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+            System.out.println("\u001B[31mNo transactions to display\u001B[0m");
+            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+            System.out.println();
+        }
+    }
 
-        TransactionNode selectedNode = selectTransaction(allTransactions);
+    public void deleteSelectedTransaction(List<TransactionNode> SelectedNode){
+        System.out.println();
+        int selectedNo = 0;
+        do {
+            System.out.print("Enter selected Transaction no to delete: ");
 
-        if (selectedNode != null) {
+            String input = scanner.nextLine();
+            System.out.println();
+            if (!ValidationUtils.isITANumber(input)) {
+                System.out.println();
+                System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                System.out.println();
+                continue;
+            }
+            if(ValidationUtils.isITANumber(input)){
+                selectedNo = Integer.parseInt(input);
+            }
+            if (selectedNo < 1 || selectedNo > SelectedNode.size()) {
+                System.out.println();
+                System.out.println("\u001B[31mSelected number is invalid.\u001B[0m");
+                System.out.println();
+                continue;
+            }
+        }while (selectedNo < 1 || selectedNo > SelectedNode.size());
+
+        if (SelectedNode != null) {
             System.out.println("Transaction Details:");
-            displayTransactionDetails(selectedNode.getData());
+            System.out.println();
 
-            if (confirmDeletion(selectedNode.getData())) {
-                transactionLinkedList.deleteTransactionById(selectedNode.getData().getTransactionID());
+            if (confirmDeletion(SelectedNode.get(selectedNo-1).getData())) {
+                transactionLinkedList.deleteTransactionById(SelectedNode.get(selectedNo-1).getData().getTransactionID());
                 System.out.println();
                 System.out.println("\u001B[34m=============================================================================================\u001B[0m");
                 System.out.println("\u001B[34mTransaction deleted successfully.\u001B[0m");
@@ -590,11 +644,12 @@ public class TransactionForm {
                 System.out.println("Deletion canceled.");
             }
         }
+
     }
 
     private boolean confirmDeletion(Transaction transaction) {
         Scanner scanner = new Scanner(System.in);
-        displayTransactionDetails(transaction);
+//        displayTransactionDetails(transaction);
         System.out.print("Are you sure you want to delete this transaction? (yes/no): ");
         String userInput = scanner.nextLine().trim().toLowerCase();
         return userInput.equals("yes") || userInput.equals("y");
@@ -602,7 +657,7 @@ public class TransactionForm {
 
 
     public void displayTransactionDetails(Transaction transaction){
-        System.out.println("Transaction Details to Delete:");
+//        System.out.println("Transaction Details to Delete:");
         System.out.println("Amount: " + transaction.getAmount());
         System.out.println("Description: " + transaction.getDescription());
         System.out.println("Category: " + transaction.getCategory());
@@ -766,7 +821,7 @@ public class TransactionForm {
                 System.out.println("                              Transaction ID: " + transaction.getData().getTransactionID());
                 System.out.println("                              Transaction Description: " + transaction.getData().getDescription());
                 System.out.println("                              Transaction Amount: " + transaction.getData().getAmount());
-                System.out.println("                              Transaction Date: " + transaction.getData().getCategory());
+                System.out.println("                              Transaction Category: " + transaction.getData().getCategory());
                 System.out.println("                              Transaction Date: " + transaction.getData().getDateTime());
                 System.out.println();
 
@@ -807,6 +862,18 @@ public class TransactionForm {
             categoryLinkedList.getCategoryByName(cat.getName()).getData().setBudget(categoryLinkedList.getCategoryByName(categoryName).getData().getBudget() - amount);
         }
 
+    }
+
+    public void displayAllTransactionDetailsToDelete(List<TransactionNode> allTransactions){
+
+        for (int i = 0; i < allTransactions.size(); i++) {
+            System.out.println((i + 1) + ". Transaction ID: " + allTransactions.get(i).getData().getTransactionID());
+            System.out.println("   Transaction Amount: " + allTransactions.get(i).getData().getAmount());
+            System.out.println("   Transaction Category: " + allTransactions.get(i).getData().getCategory());
+            System.out.println("   Transaction Description: " + allTransactions.get(i).getData().getDescription());
+            System.out.println("   Transaction Date & Time: " + allTransactions.get(i).getData().getDateTime());
+            System.out.println();
+        }
     }
 
 }

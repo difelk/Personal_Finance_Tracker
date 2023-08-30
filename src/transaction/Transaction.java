@@ -28,6 +28,7 @@ public class Transaction {
         this.category = category;
         this.isIncome = isIncome;
         this.dateTime = LocalDateTime.now();
+        this.transactionID = generateTransactionID(dateTime, category.getName(), isIncome).replace("-","").replace(":","");
     }
 
     public Transaction(double amount, String description, Category category, LocalDateTime dateTime, boolean isIncome) {
@@ -36,7 +37,7 @@ public class Transaction {
         this.category = category;
         this.dateTime = dateTime;
         this.isIncome = isIncome;
-        this.transactionID = generateTransactionID(dateTime, category, isIncome);
+        this.transactionID = generateTransactionID(dateTime, category.getName(), isIncome).replace("-","").replace(":","");
     }
 
     DataManipulationUtils dataManipulationUtils = new DataManipulationUtils();
@@ -65,7 +66,7 @@ public class Transaction {
         this.category = category.getData();
         this.dateTime = dateTime.atZone(ZoneId.systemDefault()).toLocalDateTime();
         this.isIncome = isIncome;
-        this.transactionID = generateTransactionID(dateTime, category, isIncome);
+        this.transactionID = generateTransactionID(dateTime, category.getData().getName(), isIncome);
     }
 
     public Transaction(double amountValue, String description, CategoryNode data, LocalDateTime fullDateTime, boolean isIncome) {
@@ -78,9 +79,9 @@ public class Transaction {
 
     }
 
-    private String generateTransactionID(LocalDateTime dateTime, Object category, boolean isIncome) {
+    private String generateTransactionID(LocalDateTime dateTime, String category, boolean isIncome) {
         String transactionType = isIncome ? "INC" : "EXP";
-        String categoryName = (category instanceof CategoryNode) ? ((CategoryNode) category).getData().getName() : "";
+        String categoryName =  category != null ? category : " ";
         return dateTime + categoryName + transactionType;
     }
 
