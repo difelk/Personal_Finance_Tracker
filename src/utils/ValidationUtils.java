@@ -49,12 +49,7 @@ public class ValidationUtils {
     }
 
     public boolean isITANumber(String value){
-        try{
-            double numberValue = Double.parseDouble(value);
-            return true;
-        }catch (Exception e){
-            return false;
-        }
+       return value.matches("\\d+");
     }
 
     public boolean isItAValidDate(String date) {

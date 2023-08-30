@@ -2,18 +2,15 @@
 package ui;
 
 import Category.Category;
-import Category.CategoryNode;
 import Category.CategoryLinkedList;
 import transaction.Transaction;
 import transaction.TransactionLinkedList;
 import transaction.TransactionNode;
-import utils.DataManipulationUtils;
 import utils.ValidationUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
@@ -23,7 +20,6 @@ public class TransactionForm {
     private final CategoryLinkedList categoryLinkedList;
     private final TransactionLinkedList transactionLinkedList;
 
-//    private final DataManipulationUtils dataManipulationUtils;
     private final Scanner scanner;
 
      private double amount = 0;
@@ -43,13 +39,25 @@ public class TransactionForm {
         System.out.print("Enter amount: ");
         amount = getAmountFromUser();
 
+        if (Double.isNaN(amount)) {
+            return;
+        }
+
         System.out.print("Enter description: ");
         String description = scanner.nextLine();
 
         System.out.print("Enter category name: ");
         Category category = getCategoryFromUser();
 
+        if(category == null){
+            return;
+        }
+
         LocalDateTime dateTime = getDateTimeFromUser();
+
+        if (dateTime == null){
+            return;
+        }
 
         boolean isIncome = isIncomeTransaction();
 
@@ -57,8 +65,13 @@ public class TransactionForm {
 
         transactionLinkedList.addTransaction(newTransaction);
         System.out.println();
-        System.out.println("Transaction added successfully.");
+
+        System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+        System.out.println("\u001B[34mTransaction added successfully.\u001B[0m");
+        System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+        System.out.println();
         displayPreviousTransactions();
+        System.out.println();
     }
 
 
@@ -119,13 +132,21 @@ public class TransactionForm {
 
         LocalDateTime updatedDateTime = getDateTimeFromUser();
 
+        if(updatedDateTime == null){
+            return;
+        }
+
         boolean updatedIsIncome = isIncomeTransaction();
 
         Transaction updatedTransaction = new Transaction(updatedAmount, updatedDescription, updatedCategory, updatedDateTime, updatedIsIncome);
 
         transactionLinkedList.updateTransactionById(transactionId, updatedTransaction);
 
-        System.out.println("Transaction updated successfully.");
+
+        System.out.println();
+        System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+        System.out.println("\u001B[34mTransaction updated successfully.\u001B[0m");
+        System.out.println("\u001B[34m=============================================================================================\u001B[0m");
         System.out.println();
     }
 
@@ -173,58 +194,6 @@ public class TransactionForm {
         }
     }
 
-
-//    public void updateTransactionByDateRange() {
-//        System.out.print("Enter start date (yyyy-MM-dd) for the date range: ");
-//        String startDateStr = scanner.nextLine();
-//        System.out.println();
-//
-//        System.out.print("Enter end date (yyyy-MM-dd) for the date range: ");
-//        String endDateStr = scanner.nextLine();
-//        System.out.println();
-//
-//        LocalDate startDate, endDate;
-//        try {
-//            startDate = LocalDate.parse(startDateStr);
-//            endDate = LocalDate.parse(endDateStr);
-//        } catch (DateTimeParseException e) {
-//            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
-//            return;
-//        }
-//
-//        if (startDate.isAfter(endDate)) {
-//            System.out.println("Start date must be before the end date.");
-//            return;
-//        }
-//
-//        LocalDateTime startDateInLocalDateTime = startDate.atStartOfDay();
-//        LocalDateTime endDateInLocalDateTime = endDate.atStartOfDay();
-//        List<TransactionNode> transactionsInRange = transactionLinkedList.getTransactionsByDateRange(startDateInLocalDateTime, endDateInLocalDateTime);
-//
-//        if (transactionsInRange.isEmpty()) {
-//            System.out.println("No transactions found within the specified date range.");
-//            return;
-//        }
-//
-//        System.out.println("Transactions found within the specified date range:");
-//        for (int i = 0; i < transactionsInRange.size(); i++) {
-//            System.out.println((i + 1) + ". " + transactionsInRange.get(i).getData().getDescription());
-//        }
-//
-//        System.out.print("Enter the number of the transaction to update: ");
-//        int choice = scanner.nextInt();
-//        scanner.nextLine();
-//
-//        if (choice < 1 || choice > transactionsInRange.size()) {
-//            System.out.println("Invalid choice.");
-//            return;
-//        }
-//
-//        TransactionNode selectedNode = transactionsInRange.get(choice - 1);
-//        updateTransactionDetails(selectedNode.getData());
-//    }
-
-
     public void updateAllTransactions() {
         List<TransactionNode> allTransactions = transactionLinkedList.getAllTransactions();
 
@@ -254,7 +223,6 @@ public class TransactionForm {
     public List<TransactionNode> searchTransactionsByDateRange() {
         System.out.print("Enter start date (YYYY-MM-DD): ");
         String startDateString = scanner.nextLine();
-        // Validate and convert startDateString if needed
 
         System.out.print("Enter end date (YYYY-MM-DD): ");
         String endDateString = scanner.nextLine();
@@ -283,16 +251,35 @@ public class TransactionForm {
         }
         System.out.println("Enter Category:");
         Category updatedCategory = getCategoryFromUser();
+        if(updatedCategory == null){
+            return;
+        }
 
         LocalDateTime updatedDateTime = getDateTimeFromUser();
 
         boolean updatedIsIncome = isIncomeTransaction();
 
+        if(checkTransactionAmountExceedThanCategory(updatedCategory, updatedAmount, updatedIsIncome)){
+            System.out.println();
+            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+            System.out.println("\u001B[31mYou entered an amount exceeding the allocated budget for the " + updatedCategory.getName() + " category.\u001B[0m");
+            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+            System.out.println();
+            return;
+        }
+
+        if(updatedCategory != null){
+            updateCategoryIncAndExp(updatedCategory, updatedAmount,updatedIsIncome);
+        }
+
         Transaction updatedTransaction = new Transaction(updatedAmount, updatedDescription, updatedCategory, updatedDateTime, updatedIsIncome);
 
         transactionLinkedList.updateTransactionById(existingTransaction.getTransactionID(), updatedTransaction);
 
-        System.out.println("Transaction updated successfully.");
+        System.out.println();
+        System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+        System.out.println("\u001B[34mTransaction updated successfully.\u001B[0m");
+        System.out.println("\u001B[34m=============================================================================================\u001B[0m");
         System.out.println();
     }
 
@@ -335,7 +322,6 @@ public class TransactionForm {
     }
 
 
-
     public void deleteTransactionById() {
         System.out.print("Enter Transaction ID to delete: ");
         String transactionId = scanner.nextLine();
@@ -344,7 +330,11 @@ public class TransactionForm {
         TransactionNode transactionNodeToDelete = transactionLinkedList.getTransactionById(transactionId);
 
         if (transactionNodeToDelete == null) {
-            System.out.println("Transaction not found with the given ID.");
+            System.out.println();
+            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+            System.out.println("\u001B[31mTransaction not found with the given ID.\u001B[0m");
+            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+            System.out.println();
             return;
         }
 
@@ -360,7 +350,11 @@ public class TransactionForm {
 
         if (confirmDeletion(transactionToDelete)) {
             transactionLinkedList.deleteTransactionById(transactionId);
-            System.out.println("Transaction deleted successfully.");
+            System.out.println();
+            System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+            System.out.println("\u001B[34mTransaction deleted successfully.\u001B[0m");
+            System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+            System.out.println();
         } else {
             System.out.println("Transaction not deleted.");
         }
@@ -384,7 +378,10 @@ public class TransactionForm {
         List<TransactionNode> matchingTransactions = transactionLinkedList.getTransactionsByDate(startOfDay.toLocalDate());
 
         if (matchingTransactions.isEmpty()) {
-            System.out.println("No transactions found with the given date.");
+            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+            System.out.println("\u001B[31mNo transactions found with the given date.\u001B[0m");
+            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+            System.out.println();
             return;
         }
 
@@ -395,7 +392,11 @@ public class TransactionForm {
 
             if (confirmDeletion(selectedNode.getData())) {
                 transactionLinkedList.deleteTransactionById(selectedNode.getData().getTransactionID());
-                System.out.println("Transaction deleted successfully.");
+                System.out.println();
+                System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+                System.out.println("\u001B[34mTransaction deleted successfully.\u001B[0m");
+                System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+                System.out.println();
             } else {
                 System.out.println("Deletion canceled.");
             }
@@ -431,20 +432,31 @@ public class TransactionForm {
         List<TransactionNode> transactionsInRange = transactionLinkedList.getTransactionsByDateRange(startDateInLocalDateTime, endDateInLocalDateTime);
 
         if (transactionsInRange.isEmpty()) {
-            System.out.println("No transactions found within the specified date range.");
+            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+            System.out.println("\u001B[31mNo transactions found within the specified date range.\u001B[0m");
+            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+            System.out.println();
+
             return;
         }
 
         TransactionNode selectedNode = selectTransaction(transactionsInRange);
         if (selectedNode != null) {
+            System.out.println();
             System.out.println("Transaction Details:");
             displayTransactionDetails(selectedNode.getData());
 
             if (confirmDeletion(selectedNode.getData())) {
                 transactionLinkedList.deleteTransactionById(selectedNode.getData().getTransactionID());
-                System.out.println("Transaction deleted successfully.");
+                System.out.println();
+                System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+                System.out.println("\u001B[34mTransaction deleted successfully.\u001B[0m");
+                System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+                System.out.println();
             } else {
+                System.out.println();
                 System.out.println("Deletion canceled.");
+                System.out.println();
             }
         }
     }
@@ -455,7 +467,9 @@ public class TransactionForm {
         List<TransactionNode> allTransactions = transactionLinkedList.getAllTransactions();
 
         if (allTransactions.isEmpty()) {
+            System.out.println();
             System.out.println("No transactions found.");
+            System.out.println();
             return;
         }
 
@@ -467,7 +481,11 @@ public class TransactionForm {
 
             if (confirmDeletion(selectedNode.getData())) {
                 transactionLinkedList.deleteTransactionById(selectedNode.getData().getTransactionID());
-                System.out.println("Transaction deleted successfully.");
+                System.out.println();
+                System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+                System.out.println("\u001B[34mTransaction deleted successfully.\u001B[0m");
+                System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+                System.out.println();
             } else {
                 System.out.println("Deletion canceled.");
             }
@@ -482,30 +500,6 @@ public class TransactionForm {
         return userInput.equals("yes") || userInput.equals("y");
     }
 
-//    private void deleteTransaction(TransactionNode transactionNode) {
-//        Transaction transactionToDelete = transactionNode.getData();
-//
-//        System.out.println("Transaction Details to Delete:");
-//        System.out.println("Amount: " + transactionToDelete.getAmount());
-//        System.out.println("Description: " + transactionToDelete.getDescription());
-//        System.out.println("Category: " + transactionToDelete.getCategory());
-//        System.out.println("Date and Time: " + transactionToDelete.getDateTime());
-//        System.out.println("Is Income: " + (transactionToDelete.isIncome() ? "Yes" : "No"));
-//        System.out.println();
-//
-//        System.out.print("Are you sure you want to delete this transaction? (yes/no): ");
-//        String confirmation = scanner.nextLine().toLowerCase();
-//
-//        if (confirmation.equals("yes") || confirmation.equals("y")) {
-//            transactionLinkedList.deleteTransactionById(transactionToDelete.getTransactionID());
-//            System.out.println("Transaction deleted successfully.");
-//        } else if (confirmation.equals("no") || confirmation.equals("n")) {
-//            System.out.println("Transaction not deleted.");
-//        } else {
-//            System.out.println("Invalid choice. Transaction not deleted.");
-//        }
-//        System.out.println();
-//    }
 
     public void displayTransactionDetails(Transaction transaction){
         System.out.println("Transaction Details to Delete:");
@@ -527,13 +521,14 @@ public class TransactionForm {
             if (amountInput.equalsIgnoreCase("exit")) {
                 System.out.println("Exiting...");
 
-                return 0;
+                return Double.NaN;
             }
             try {
                 amount = Double.parseDouble(amountInput);
                 isValid = true;
             } catch (NumberFormatException e) {
                 System.out.print("Invalid amount input. Please enter a valid number.");
+
             }
         }
 
@@ -546,10 +541,22 @@ public class TransactionForm {
         while (category == null) {
             String categoryName = scanner.nextLine().toLowerCase().trim();
 
+            if (categoryName.equalsIgnoreCase("exit")) {
+                System.out.println("Exiting to main menu...");
+                return null;
+            }
+
             if (categoryLinkedList.isCategoryExists(categoryName)) {
                 if(this.amount > categoryLinkedList.getCategoryByName(categoryName).getData().getBudget()){
-                    System.out.println("amount is exceeding than allocated budget in " + categoryLinkedList.getCategoryByName(categoryName).getData().getName() + " category.");
+
+                    System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+                    System.out.println("\u001B[31mamount is exceeding than allocated budget in " + categoryLinkedList.getCategoryByName(categoryName).getData().getName() + " category.\u001B[0m");
                     System.out.println("remaining budget for " + categoryLinkedList.getCategoryByName(categoryName).getData().getName() + " is : " + categoryLinkedList.getCategoryByName(categoryName).getData().getBudget());
+                    System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+                    System.out.println();
+
+                    return null;
+
 
                 }else{
                     categoryLinkedList.getCategoryByName(categoryName).getData().setBudget(categoryLinkedList.getCategoryByName(categoryName).getData().getBudget() - this.amount);
@@ -577,50 +584,61 @@ public class TransactionForm {
             return defaultDateTime;
         }
 
-        LocalDateTime dateTime;
+        LocalDateTime dateTime = null;
 
-        if (!dateString.isEmpty() && !timeString.isEmpty()) {
-            ValidationUtils validationUtils = new ValidationUtils();
+        while (true) {
+            if (!dateString.isEmpty()) {
+                ValidationUtils validationUtils = new ValidationUtils();
 
-            while (!validationUtils.isItAValidDate(dateString)) {
-                System.out.println("Invalid date format. Please enter a valid date (YYYY-MM-DD): ");
-                dateString = scanner.nextLine();
+                while (!validationUtils.isItAValidDate(dateString)) {
+                    System.out.print("Invalid date format. Please enter a valid date (YYYY-MM-DD): ");
+                    dateString = scanner.next();
+                    System.out.println();
+                }
+
+                LocalDate date = LocalDate.parse(dateString);
+                if (date.isAfter(LocalDate.now())) {
+                    System.out.print("Future date is not allowed. Please enter a valid date (YYYY-MM-DD):");
+                    dateString = scanner.next();
+                    if ("exit".equalsIgnoreCase(dateString.trim())) {
+                        return null;
+                    }
+                } else {
+                    if (!timeString.isEmpty()) {
+                        ValidationUtils timeValidationUtils = new ValidationUtils();
+                        while (!timeValidationUtils.isItAValidTime(timeString)) {
+                            System.out.print("Invalid time format. Please enter a valid time (HH:mm): ");
+                            timeString = scanner.next();
+                            System.out.println();
+                        }
+
+                        LocalTime time = LocalTime.parse(timeString);
+                        dateTime = LocalDateTime.of(date, time);
+                    } else {
+                        dateTime = date.atStartOfDay();
+                    }
+                    break;
+                }
+
+            } else if (!timeString.isEmpty()) {
+                ValidationUtils validationUtils = new ValidationUtils();
+
+                while (!validationUtils.isItAValidTime(timeString)) {
+                    System.out.print("Invalid time format. Please enter a valid time (HH:mm): ");
+                    timeString = scanner.next();
+                    System.out.println();
+                }
+
+                LocalTime time = LocalTime.parse(timeString);
+                dateTime = defaultDateTime.withHour(time.getHour()).withMinute(time.getMinute());
+                break;
             }
-
-            while (!validationUtils.isItAValidTime(timeString)) {
-                System.out.println("Invalid time format. Please enter a valid time (HH:mm): ");
-                timeString = scanner.nextLine();
-            }
-
-            String dateTimeString = dateString + " " + timeString;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            dateTime = LocalDateTime.parse(dateTimeString, formatter);
-
-        } else if (!dateString.isEmpty()) {
-            ValidationUtils validationUtils = new ValidationUtils();
-
-            while (!validationUtils.isItAValidDate(dateString)) {
-                System.out.println("Invalid date format. Please enter a valid date (YYYY-MM-DD): ");
-                dateString = scanner.nextLine();
-            }
-
-            dateTime = DataManipulationUtils.ConvertDateStringToLocalDateTime(dateString).with(LocalTime.MIN);
-        } else if (!timeString.isEmpty()) {
-            ValidationUtils validationUtils = new ValidationUtils();
-
-            while (!validationUtils.isItAValidTime(timeString)) {
-                System.out.println("Invalid time format. Please enter a valid time (HH:mm): ");
-                timeString = scanner.nextLine();
-            }
-
-            LocalDateTime time = DataManipulationUtils.convertStringToTime(timeString);
-            dateTime = defaultDateTime.withHour(time.getHour()).withMinute(time.getMinute());
-        } else {
-            dateTime = defaultDateTime;
         }
 
         return dateTime;
     }
+
+
 
 
     private void displayPreviousTransactions() {
@@ -628,14 +646,14 @@ public class TransactionForm {
             System.out.println();
             System.out.println("            Previous Transactions:");
             System.out.println();
-            for (TransactionNode transaction : transactionLinkedList.getAllTransactions()) {
+            TransactionNode transaction = transactionLinkedList.getAllTransactions().get(0);
                 System.out.println("                              Transaction ID: " + transaction.getData().getTransactionID());
                 System.out.println("                              Transaction Description: " + transaction.getData().getDescription());
                 System.out.println("                              Transaction Amount: " + transaction.getData().getAmount());
                 System.out.println("                              Transaction Date: " + transaction.getData().getCategory());
                 System.out.println("                              Transaction Date: " + transaction.getData().getDateTime());
                 System.out.println();
-            }
+
         }
     }
 
@@ -654,6 +672,23 @@ public class TransactionForm {
         String transactionType = scanner.nextLine();
         this.isIncome = transactionType.equalsIgnoreCase("INC");
         return transactionType.equalsIgnoreCase("INC");
+    }
+
+    public boolean checkTransactionAmountExceedThanCategory(Category cat, Double amount, boolean isIncome){
+        if(!isIncome){
+          return   amount > categoryLinkedList.getCategoryByName(cat.getName()).getData().getBudget();
+        }
+        return  false;
+    }
+
+    public void updateCategoryIncAndExp(Category cat, double amount, boolean isIncome){
+        if(isIncome){
+            categoryLinkedList.getCategoryByName(cat.getName()).getData().setBudget(categoryLinkedList.getCategoryByName(categoryName).getData().getBudget() + amount);
+        }else{
+            categoryLinkedList.getCategoryByName(cat.getName()).getData().setBudget(categoryLinkedList.getCategoryByName(categoryName).getData().getBudget() - amount);
+
+        }
+
     }
 
 }
