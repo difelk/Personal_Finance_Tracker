@@ -21,7 +21,6 @@ import java.util.Scanner;
         this.categoryLinkedList = categoryLinkedList;
         this.scanner = new Scanner(System.in);
     }
-
      public void hardCodedCategoryForm(CategoryLinkedList categoryLinkedListMain, TransactionLinkedList TransactionLinkedlistHC) {
 
          LocalDateTime creationDateTime = LocalDateTime.now();
@@ -61,6 +60,7 @@ import java.util.Scanner;
         String description = scanner.nextLine();
         System.out.println();
 
+        System.out.print("Enter category budget: ");
         double budget = getBudgetFromUser();
 
         LocalDateTime creationDateTime = LocalDateTime.now();
@@ -88,25 +88,29 @@ import java.util.Scanner;
         }
     }
 
+     private double getBudgetFromUser() {
+         double amount = -1;
+         boolean isValid = false;
 
-    private double getBudgetFromUser() {
-        double budget = -1;
-        boolean isValid = false;
+         while (!isValid) {
 
-        while (!isValid) {
-            System.out.print("Enter category budget: ");
-            String budgetInput = scanner.next();
+             String amountInput = scanner.nextLine();
+             if (amountInput.equalsIgnoreCase("exit")) {
+                 System.out.println("Exiting...");
 
-            try {
-                budget = Double.parseDouble(budgetInput);
-                isValid = true;
-            } catch (NumberFormatException e) {
-                System.out.print("Invalid budget input. Please enter a valid number.");
-            }
-        }
-
-        return budget;
-    }
+                 return Double.NaN;
+             }
+             try {
+                 amount = Double.parseDouble(amountInput);
+                 isValid = true;
+             } catch (NumberFormatException e) {
+                 System.out.println();
+                 System.out.print("Invalid amount input. Please enter a valid number.");
+                 System.out.println();
+             }
+         }
+         return amount;
+     }
 
 
      public void updateCategoryByName() {
@@ -143,6 +147,7 @@ import java.util.Scanner;
              updatedDescription = existingCategory.getDescription();
          }
 
+         System.out.print("Enter category budget: ");
          double updatedBudget = getBudgetFromUser();
 
          Category updatedCategory = new Category(updatedCategoryName, updatedDescription, updatedBudget, existingCategory.getCreationDate());
@@ -360,7 +365,7 @@ import java.util.Scanner;
             return false;
         }
 
-        if (category.getBudget() <= 0) {
+        if (category.getBudget() < 0) {
             System.out.print("Invalid budget value. Budget must be a positive number.");
             return false;
         }

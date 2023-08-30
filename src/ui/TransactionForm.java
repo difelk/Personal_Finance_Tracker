@@ -47,31 +47,66 @@ public class TransactionForm {
         String description = scanner.nextLine();
 
         System.out.print("Enter category name: ");
-        Category category = getCategoryFromUser();
+        Category category = getCategoryFromUserInput();
 
-        if(category == null){
+        if (category == null) {
             return;
         }
 
+        categoryName = category.getName();
+
         LocalDateTime dateTime = getDateTimeFromUser();
 
-        if (dateTime == null){
+
+        if (dateTime == null) {
             return;
         }
 
         boolean isIncome = isIncomeTransaction();
 
-        Transaction newTransaction = new Transaction(amount, description, category, dateTime, isIncome);
 
+        if (!isIncome) {
+            if (checkTransactionAmountExceedThanCategory(category, amount, isIncome)) {
+                System.out.println("Error: Amount exceeds allocated budget for the selected category.");
+                return;
+            } else {
+                updateCategoryIncAndExp(category, amount, isIncome);
+            }
+        } else {
+            updateCategoryIncAndExp(category, amount, isIncome);
+        }
+
+        Transaction newTransaction = new Transaction(amount, description, category, dateTime, isIncome);
         transactionLinkedList.addTransaction(newTransaction);
         System.out.println();
-
         System.out.println("\u001B[34m=============================================================================================\u001B[0m");
         System.out.println("\u001B[34mTransaction added successfully.\u001B[0m");
         System.out.println("\u001B[34m=============================================================================================\u001B[0m");
         System.out.println();
         displayPreviousTransactions();
         System.out.println();
+    }
+
+
+    public Category getCategoryFromUserInput(){
+
+        Category category = null;
+
+        while (category == null) {
+            String categoryName = scanner.nextLine().toLowerCase().trim();
+
+            if (categoryName.equalsIgnoreCase("exit")) {
+                System.out.println("Exiting to main menu...");
+                return null;
+            }
+
+            if (categoryLinkedList.isCategoryExists(categoryName)) {
+                    category = categoryLinkedList.getCategoryByName(categoryName).getData();
+            } else {
+                System.out.print("Category does not exist. Please enter a valid category name.");
+            }
+        }
+        return category;
     }
 
 
@@ -108,6 +143,7 @@ public class TransactionForm {
 
         Transaction existingTransaction = transactionNodeToUpdate.getData();
 
+        System.out.println();
         System.out.println("Current Transaction Details:");
         System.out.println("Old Amount: " + existingTransaction.getAmount());
         System.out.println("Old Description: " + existingTransaction.getDescription());
@@ -119,7 +155,7 @@ public class TransactionForm {
         System.out.println("Enter updated values (press enter to skip):");
 
         System.out.print("New Amount: ");
-        double updatedAmount = getAmountFromUser();
+        double updatedAmount = getUpdateAmountFromUser(existingTransaction.getAmount());
 
         System.out.print("New Description: ");
         String updatedDescription = scanner.nextLine().trim();
@@ -137,6 +173,8 @@ public class TransactionForm {
         }
 
         boolean updatedIsIncome = isIncomeTransaction();
+
+
 
         Transaction updatedTransaction = new Transaction(updatedAmount, updatedDescription, updatedCategory, updatedDateTime, updatedIsIncome);
 
@@ -178,9 +216,11 @@ public class TransactionForm {
                 System.out.println((i + 1) + ". " + matchingTransactions.get(i).getData().getDescription());
             }
 
+            System.out.println();
             System.out.print("Enter the number of the transaction to update: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
+            System.out.println();
 
             if (choice < 1 || choice > matchingTransactions.size()) {
                 System.out.println("Invalid choice.");
@@ -206,11 +246,11 @@ public class TransactionForm {
         for (int i = 0; i < allTransactions.size(); i++) {
             System.out.println((i + 1) + ". " + allTransactions.get(i).getData().getDescription());
         }
-
+        System.out.println();
         System.out.print("Enter the number of the transaction to update: ");
         int choice = scanner.nextInt();
         scanner.nextLine();
-
+        System.out.println();
         if (choice < 1 || choice > allTransactions.size()) {
             System.out.println("Invalid choice.");
             return;
@@ -241,46 +281,78 @@ public class TransactionForm {
         System.out.println();
 
         System.out.println("Enter updated values below (press enter to skip):");
-        System.out.println("Enter New Amount:");
-        double updatedAmount = getAmountFromUser();
+        System.out.print("Enter New Amount:");
+
+        double updatedAmount = getUpdateAmountFromUser(existingTransaction.getAmount());
+//        double updatedAmount = getAmountFromUser();
 
         System.out.print("New Description: ");
         String updatedDescription = scanner.nextLine().trim();
         if (updatedDescription.isEmpty()) {
             updatedDescription = existingTransaction.getDescription();
         }
-        System.out.println("Enter Category:");
-        Category updatedCategory = getCategoryFromUser();
+        System.out.print("Enter Category:");
+        Category updatedCategory = getCategoryFromUserInput();
+//        Category updatedCategory = getCategoryFromUser();
+
+
         if(updatedCategory == null){
             return;
         }
+
+
+        categoryName = updatedCategory.getName();
 
         LocalDateTime updatedDateTime = getDateTimeFromUser();
 
         boolean updatedIsIncome = isIncomeTransaction();
 
-        if(checkTransactionAmountExceedThanCategory(updatedCategory, updatedAmount, updatedIsIncome)){
-            System.out.println();
-            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
-            System.out.println("\u001B[31mYou entered an amount exceeding the allocated budget for the " + updatedCategory.getName() + " category.\u001B[0m");
-            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
-            System.out.println();
-            return;
+
+        if (!updatedIsIncome) {
+            if (checkTransactionAmountExceedThanCategory(updatedCategory, updatedAmount, updatedIsIncome)) {
+                System.out.println("Error: Amount exceeds allocated budget for the selected category.");
+                return;
+            } else {
+                updateCategoryIncAndExp(updatedCategory, updatedAmount, updatedIsIncome);
+            }
+        } else {
+            updateCategoryIncAndExp(updatedCategory, updatedAmount, updatedIsIncome);
         }
 
-        if(updatedCategory != null){
-            updateCategoryIncAndExp(updatedCategory, updatedAmount,updatedIsIncome);
-        }
 
-        Transaction updatedTransaction = new Transaction(updatedAmount, updatedDescription, updatedCategory, updatedDateTime, updatedIsIncome);
-
-        transactionLinkedList.updateTransactionById(existingTransaction.getTransactionID(), updatedTransaction);
-
+        Transaction newTransaction = new Transaction(updatedAmount, updatedDescription, updatedCategory, updatedDateTime, updatedIsIncome);
+        transactionLinkedList.addTransaction(newTransaction);
         System.out.println();
         System.out.println("\u001B[34m=============================================================================================\u001B[0m");
-        System.out.println("\u001B[34mTransaction updated successfully.\u001B[0m");
+        System.out.println("\u001B[34mTransaction Updated successfully.\u001B[0m");
         System.out.println("\u001B[34m=============================================================================================\u001B[0m");
         System.out.println();
+        displayPreviousTransactions();
+        System.out.println();
+
+
+//        if(checkTransactionAmountExceedThanCategory(updatedCategory, updatedAmount, updatedIsIncome)){
+//            System.out.println();
+//            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+//            System.out.println("\u001B[31mYou entered an amount exceeding the allocated budget for the " + updatedCategory.getName() + " category.\u001B[0m");
+//            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+//            System.out.println();
+//            return;
+//        }
+//
+//        if(updatedCategory != null){
+//            updateCategoryIncAndExp(updatedCategory, updatedAmount,updatedIsIncome);
+//        }
+//
+//        Transaction updatedTransaction = new Transaction(updatedAmount, updatedDescription, updatedCategory, updatedDateTime, updatedIsIncome);
+//
+//        transactionLinkedList.updateTransactionById(existingTransaction.getTransactionID(), updatedTransaction);
+//
+//        System.out.println();
+//        System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+//        System.out.println("\u001B[34mTransaction updated successfully.\u001B[0m");
+//        System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+//        System.out.println();
     }
 
     public void getAllTransaction(TransactionLinkedList transactionLinkedList){
@@ -320,7 +392,6 @@ public class TransactionForm {
             System.out.println(e);
         }
     }
-
 
     public void deleteTransactionById() {
         System.out.print("Enter Transaction ID to delete: ");
@@ -528,10 +599,30 @@ public class TransactionForm {
                 isValid = true;
             } catch (NumberFormatException e) {
                 System.out.print("Invalid amount input. Please enter a valid number.");
-
             }
         }
+        return amount;
+    }
+    private double getUpdateAmountFromUser(Double oldAmount) {
+        double amount = -1;
+        boolean isValid = false;
 
+        while (!isValid) {
+            String amountInput = scanner.nextLine();
+            if (amountInput.equalsIgnoreCase("exit")) {
+                System.out.println("Exiting...");
+                return Double.NaN;
+            }
+            if(amountInput.isEmpty()){
+                return oldAmount;
+            }
+            try {
+                amount = Double.parseDouble(amountInput);
+                isValid = true;
+            } catch (NumberFormatException e) {
+                System.out.print("Invalid amount input. Please enter a valid number.");
+            }
+        }
         return amount;
     }
 
@@ -547,24 +638,19 @@ public class TransactionForm {
             }
 
             if (categoryLinkedList.isCategoryExists(categoryName)) {
-                if(this.amount > categoryLinkedList.getCategoryByName(categoryName).getData().getBudget()){
-
+                if (this.amount > categoryLinkedList.getCategoryByName(categoryName).getData().getBudget()) {
+                    // Handle budget exceeding error
                     System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
-                    System.out.println("\u001B[31mamount is exceeding than allocated budget in " + categoryLinkedList.getCategoryByName(categoryName).getData().getName() + " category.\u001B[0m");
-                    System.out.println("remaining budget for " + categoryLinkedList.getCategoryByName(categoryName).getData().getName() + " is : " + categoryLinkedList.getCategoryByName(categoryName).getData().getBudget());
+                    System.out.println("\u001B[31mAmount exceeds allocated budget in " + categoryLinkedList.getCategoryByName(categoryName).getData().getName() + " category.\u001B[0m");
+                    System.out.println("Remaining budget for " + categoryLinkedList.getCategoryByName(categoryName).getData().getName() + " is : " + categoryLinkedList.getCategoryByName(categoryName).getData().getBudget());
                     System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
                     System.out.println();
-
-                    return null;
-
-
-                }else{
+                } else {
                     categoryLinkedList.getCategoryByName(categoryName).getData().setBudget(categoryLinkedList.getCategoryByName(categoryName).getData().getBudget() - this.amount);
                     category = categoryLinkedList.getCategoryByName(categoryName).getData();
                 }
-
             } else {
-                System.out.print("Category does not exist. Please enter a valid category name.");
+                System.out.println("Category does not exist. Please enter a valid category name.");
             }
         }
 
@@ -591,15 +677,18 @@ public class TransactionForm {
                 ValidationUtils validationUtils = new ValidationUtils();
 
                 while (!validationUtils.isItAValidDate(dateString)) {
+                    System.out.println();
                     System.out.print("Invalid date format. Please enter a valid date (YYYY-MM-DD): ");
-                    dateString = scanner.next();
+                    dateString = scanner.nextLine();
                     System.out.println();
                 }
 
                 LocalDate date = LocalDate.parse(dateString);
                 if (date.isAfter(LocalDate.now())) {
-                    System.out.print("Future date is not allowed. Please enter a valid date (YYYY-MM-DD):");
-                    dateString = scanner.next();
+                    System.out.println();
+                    System.out.print("Future date is not allowed. Please enter a valid date (YYYY-MM-DD): ");
+                    dateString = scanner.nextLine();
+
                     if ("exit".equalsIgnoreCase(dateString.trim())) {
                         return null;
                     }
@@ -607,8 +696,9 @@ public class TransactionForm {
                     if (!timeString.isEmpty()) {
                         ValidationUtils timeValidationUtils = new ValidationUtils();
                         while (!timeValidationUtils.isItAValidTime(timeString)) {
+                            System.out.println();
                             System.out.print("Invalid time format. Please enter a valid time (HH:mm): ");
-                            timeString = scanner.next();
+                            timeString = scanner.nextLine();
                             System.out.println();
                         }
 
@@ -619,13 +709,13 @@ public class TransactionForm {
                     }
                     break;
                 }
-
             } else if (!timeString.isEmpty()) {
                 ValidationUtils validationUtils = new ValidationUtils();
 
                 while (!validationUtils.isItAValidTime(timeString)) {
+                    System.out.println();
                     System.out.print("Invalid time format. Please enter a valid time (HH:mm): ");
-                    timeString = scanner.next();
+                    timeString = scanner.nextLine();
                     System.out.println();
                 }
 
@@ -637,9 +727,6 @@ public class TransactionForm {
 
         return dateTime;
     }
-
-
-
 
     private void displayPreviousTransactions() {
         if (!transactionLinkedList.isEmpty()) {
@@ -657,26 +744,29 @@ public class TransactionForm {
         }
     }
 
-    private void handleCategoryBudget() {
-        if(this.isIncome){
-            categoryLinkedList.getCategoryByName(categoryName).getData().setBudget(categoryLinkedList.getCategoryByName(categoryName).getData().getBudget() + this.amount);
-        }else{
-            categoryLinkedList.getCategoryByName(categoryName).getData().setBudget(categoryLinkedList.getCategoryByName(categoryName).getData().getBudget() - this.amount);
+    private boolean isIncomeTransaction() {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.print("Is it an income or expense? (type \"INC\" for income, \"EXP\" for expense): ");
+            String transactionType = scanner.nextLine();
+
+            if (transactionType.equalsIgnoreCase("INC")) {
+                this.isIncome = true;
+                return true;
+            } else if (transactionType.equalsIgnoreCase("EXP")) {
+                this.isIncome = false;
+                return false;
+            } else {
+                System.out.println("Invalid input. Please enter \"INC\" for income or \"EXP\" for expense.");
+            }
         }
     }
 
 
-
-    private boolean isIncomeTransaction() {
-        System.out.print("Is it an income or expense? (type \"INC\" for income, \"EXP\" for expense): ");
-        String transactionType = scanner.nextLine();
-        this.isIncome = transactionType.equalsIgnoreCase("INC");
-        return transactionType.equalsIgnoreCase("INC");
-    }
-
     public boolean checkTransactionAmountExceedThanCategory(Category cat, Double amount, boolean isIncome){
         if(!isIncome){
-          return   amount > categoryLinkedList.getCategoryByName(cat.getName()).getData().getBudget();
+          return   amount > categoryLinkedList.getCategoryByName(cat.getName().toLowerCase().trim()).getData().getBudget();
         }
         return  false;
     }
@@ -686,7 +776,6 @@ public class TransactionForm {
             categoryLinkedList.getCategoryByName(cat.getName()).getData().setBudget(categoryLinkedList.getCategoryByName(categoryName).getData().getBudget() + amount);
         }else{
             categoryLinkedList.getCategoryByName(cat.getName()).getData().setBudget(categoryLinkedList.getCategoryByName(categoryName).getData().getBudget() - amount);
-
         }
 
     }
