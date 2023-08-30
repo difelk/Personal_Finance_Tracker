@@ -68,7 +68,6 @@ public class CategoryLinkedList {
 
     public CategoryNode getCategoryByName(String categoryName) {
         CategoryNode currentNode = head;
-
         if(!isEmpty()){
             while (currentNode != null) {
                 if (currentNode.getData().getName().toLowerCase().trim().equals(categoryName.toLowerCase().trim())) {
