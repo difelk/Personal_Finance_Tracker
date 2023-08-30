@@ -311,7 +311,7 @@ public class MainMenu {
                 String input = scanner.nextLine();
                 System.out.println();
 
-                if (!input.matches("\\d+")) {
+                if (!ValidationUtils.isITANumber(input)) {
                     System.out.println();
                     System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
                     System.out.println();
@@ -357,7 +357,7 @@ public class MainMenu {
         System.out.println();
         System.out.println();
 
-        int searchOption;
+        int searchOption = 0;
         do {
             System.out.println();
             System.out.println("Select a search option:");
@@ -368,8 +368,17 @@ public class MainMenu {
             System.out.println();
             System.out.print("Enter your choice: ");
 
-            searchOption = scanner.nextInt();
-            scanner.nextLine();
+            String input = scanner.nextLine();
+
+            if (!ValidationUtils.isITANumber(input)) {
+                System.out.println();
+                System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                System.out.println();
+                continue;
+            }
+
+            searchOption = Integer.parseInt(input);
+            
 
             switch (searchOption) {
                 case 1:

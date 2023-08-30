@@ -292,28 +292,57 @@ public class TransactionForm {
                 System.out.println("\u001B[31mNo Transaction details to display\u001B[0m");
             }
             else {
+                System.out.println();
                 for (int i = 0; i < transactionNodes.size(); i++) {
                     System.out.println((i+1) + ". Description: " + transactionNodes.get(i).getData().getDescription());
                     System.out.println("   Category: " + transactionNodes.get(i).getData().getCategory());
+                    System.out.println("   Transaction Date & Time: " + transactionNodes.get(i).getData().getDateTime());
+                    System.out.println();
                 }
                 System.out.println();
-                System.out.print("Enter selected Category no: ");
-                int selectedNo = scanner.nextInt();
+                int selectedNo = 0;
+                do {
+                    System.out.print("Enter selected Transaction no: ");
 
-                System.out.println();
+                    String input = scanner.nextLine();
 
-                if (selectedNo < 1 || selectedNo > transactionNodes.size()) {
-                    System.out.println("Selected number is invalid");
-                    return;
-                }
+                    if (!ValidationUtils.isITANumber(input)) {
+                        System.out.println();
+                        System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                        System.out.println();
+                        continue;
+                    }
+                    if(ValidationUtils.isITANumber(input)){
+                        selectedNo = Integer.parseInt(input);
+                    }
+                    if (selectedNo < 1 || selectedNo > transactionNodes.size()) {
+                        System.out.println();
+                        System.out.println("\u001B[31mSelected number is invalid.\u001B[0m");
+                        System.out.println();
+                        continue;
+                    }
+                }while (selectedNo < 1 || selectedNo > transactionNodes.size());
 
                 System.out.println();
                 System.out.println("Selected Transaction Details");
                 System.out.println();
 
-                System.out.println("Transaction Description: " + transactionNodes.get(selectedNo - 1).getData().getDescription());
-                System.out.println("Transaction Category: " + transactionNodes.get(selectedNo - 1).getData().getCategory());
-                System.out.println("Transaction Date & Time: " + transactionNodes.get(selectedNo - 1).getData().getDateTime());
+                String defaultTransactionId = "2023-01-0110:30transactionEXP";
+
+                if(transactionNodes.get(selectedNo - 1).getData().getTransactionID() == null){
+                    System.out.println("Transaction ID: " + defaultTransactionId);
+                    System.out.println("Transaction Category: " + transactionNodes.get(selectedNo - 1).getData().getCategory());
+                    System.out.println("Transaction Description: " + transactionNodes.get(selectedNo - 1).getData().getDescription());
+                    System.out.println("Transaction Amount: " + transactionNodes.get(selectedNo - 1).getData().getAmount());
+                    System.out.println("Transaction Date & Time: " + transactionNodes.get(selectedNo - 1).getData().getDateTime());
+                }
+                else {
+                    System.out.println("Transaction ID: " + transactionNodes.get(selectedNo - 1).getData().getTransactionID());
+                    System.out.println("Transaction Category: " + transactionNodes.get(selectedNo - 1).getData().getCategory());
+                    System.out.println("Transaction Description: " + transactionNodes.get(selectedNo - 1).getData().getDescription());
+                    System.out.println("Transaction Amount: " + transactionNodes.get(selectedNo - 1).getData().getAmount());
+                    System.out.println("Transaction Date & Time: " + transactionNodes.get(selectedNo - 1).getData().getDateTime());
+                }
             }
         }
         catch (NullPointerException e){

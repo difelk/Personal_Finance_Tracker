@@ -5,6 +5,7 @@ import Category.CategoryNode;
 import Category.CategoryLinkedList;
 import transaction.Transaction;
 import transaction.TransactionLinkedList;
+import utils.ValidationUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -325,15 +326,31 @@ import java.util.Scanner;
                     System.out.println((i+1) + ". " + categoryNodes.get(i).getData().getName());
                 }
                 System.out.println();
-                System.out.print("Enter selected Category no: ");
-                int selectedNo = scanner.nextInt();
 
-                System.out.println();
+                int selectedNo = 0;
+                do {
+                    System.out.print("Enter selected Category no: ");
 
-                if(selectedNo < 1 || selectedNo > categoryNodes.size()){
-                    System.out.println("Selected number is invalid");
-                    return;
-                }
+                    String input = scanner.nextLine();
+
+                    if (!ValidationUtils.isITANumber(input)) {
+                        System.out.println();
+                        System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                        System.out.println();
+                        continue;
+                    }
+                    if(ValidationUtils.isITANumber(input)){
+                        selectedNo = Integer.parseInt(input);
+                    }
+                    if (selectedNo < 1 || selectedNo > categoryNodes.size()) {
+                        System.out.println();
+                        System.out.println("\u001B[31mSelected number is invalid.\u001B[0m");
+                        System.out.println();
+                        continue;
+                    }
+
+                }while (selectedNo < 1 || selectedNo > categoryNodes.size());
+
                 System.out.println();
                 System.out.println("Selected Category Details");
                 System.out.println();
