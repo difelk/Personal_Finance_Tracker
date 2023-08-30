@@ -36,9 +36,9 @@ public class MainMenu {
             System.out.println("\u001B[33m03. DELETE TRANSACTION\u001B[0m");
             System.out.println("\u001B[32m04. ADD CATEGORY\u001B[0m");
             System.out.println("\u001B[32m05. UPDATE CATEGORY\u001B[0m");
-            System.out.println("\u001B[32m06. DELETE CATEGORY\u001B[0m");
-            System.out.println("\u001B[34m07. SEARCH\u001B[0m");
-            System.out.println("\u001B[34m08. HELP\u001B[0m");
+//            System.out.println("\u001B[32m06. DELETE CATEGORY\u001B[0m");
+            System.out.println("\u001B[34m06. SEARCH\u001B[0m");
+            System.out.println("\u001B[34m07. HELP\u001B[0m");
             System.out.println("\u001B[31m99. EXIT\u001B[0m");
             System.out.println();
             System.out.println("===========================================================================================");
@@ -51,9 +51,9 @@ public class MainMenu {
                 case 3 -> deleteTransaction();
                 case 4 -> addCategory();
                 case 5 -> updateCategory();
-                case 6 -> deleteCategory();
-                case 7 -> search();
-                case 8 -> help();
+//                case 6 -> deleteCategory();
+                case 6 -> search();
+                case 7 -> help();
                 case 99 -> isMenuOpen = false;
                 default -> isMenuOpen = true;
             }
@@ -289,64 +289,64 @@ public class MainMenu {
         } while (updateOption != 5);
     }
 
-    private void deleteCategory() {
-        System.out.println("\u001B[32m                                    DELETE CATEGORY                          \u001B[0m");
-        System.out.println();
-        int deleteOption = -1;
-
-        do {
-            try {
-                System.out.println();
-                System.out.println("Select a delete option for categories:");
-                System.out.println();
-                System.out.println("1. Search categories by ID");
-                System.out.println("2. Search categories by date");
-                System.out.println("3. Search categories by date range");
-                System.out.println("4. Get all categories");
-                System.out.println("\u001B[34m5. Back to main menu\u001B[0m");
-                System.out.println();
-                System.out.print("Enter your choice: ");
-
-
-                String input = scanner.nextLine();
-                System.out.println();
-
-                if (!ValidationUtils.isITANumber(input)) {
-                    System.out.println();
-                    System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
-                    System.out.println();
-                    continue;
-                }
-
-                deleteOption = Integer.parseInt(input);
-
-                switch (deleteOption) {
-                    case 1:
-
-                        break;
-                    case 2:
-
-                        break;
-                    case 3:
-
-                        break;
-                    case 4:
-
-                        break;
-                    case 5:
-                        System.out.println("                                      \u001BReturning to main menu...\u001B[0m");
-                        break;
-                    default:
-                        System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println();
-                System.out.println("Invalid input. Please enter a valid option number.");
-                System.out.println();
-                deleteOption = -1;
-            }
-        } while (deleteOption != 5);
-    }
+//    private void deleteCategory() {
+//        System.out.println("\u001B[32m                                    DELETE CATEGORY                          \u001B[0m");
+//        System.out.println();
+//        int deleteOption = -1;
+//
+//        do {
+//            try {
+//                System.out.println();
+//                System.out.println("Select a delete option for categories:");
+//                System.out.println();
+//                System.out.println("1. Search categories by ID");
+//                System.out.println("2. Search categories by date");
+//                System.out.println("3. Search categories by date range");
+//                System.out.println("4. Get all categories");
+//                System.out.println("\u001B[34m5. Back to main menu\u001B[0m");
+//                System.out.println();
+//                System.out.print("Enter your choice: ");
+//
+//
+//                String input = scanner.nextLine();
+//                System.out.println();
+//
+//                if (!ValidationUtils.isITANumber(input)) {
+//                    System.out.println();
+//                    System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+//                    System.out.println();
+//                    continue;
+//                }
+//
+//                deleteOption = Integer.parseInt(input);
+//
+//                switch (deleteOption) {
+//                    case 1:
+//
+//                        break;
+//                    case 2:
+//
+//                        break;
+//                    case 3:
+//
+//                        break;
+//                    case 4:
+//
+//                        break;
+//                    case 5:
+//                        System.out.println("                                      \u001BReturning to main menu...\u001B[0m");
+//                        break;
+//                    default:
+//                        System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+//                }
+//            } catch (NumberFormatException e) {
+//                System.out.println();
+//                System.out.println("Invalid input. Please enter a valid option number.");
+//                System.out.println();
+//                deleteOption = -1;
+//            }
+//        } while (deleteOption != 5);
+//    }
 
 
     private void search() {

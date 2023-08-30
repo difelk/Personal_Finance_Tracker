@@ -78,6 +78,7 @@ import java.util.Scanner;
             System.out.println();
 
             System.out.println("            Entered Category Details:");
+            System.out.println("                                        Category ID: " + newCategory.getCategoryID());
             System.out.println("                                        Category Name: " + newCategory.getName());
             System.out.println("                                        Description: " + newCategory.getDescription());
             System.out.println("                                        Budget: " + newCategory.getBudget() + "/=");
@@ -107,7 +108,6 @@ import java.util.Scanner;
              } catch (NumberFormatException e) {
                  System.out.println();
                  System.out.print("Invalid amount input. Please enter a valid number.");
-                 System.out.println();
              }
          }
          return amount;

@@ -155,7 +155,6 @@ public class TransactionLinkedList {
 
         if (head.getData().getTransactionID().equals(transactionId)) {
             head = head.getNextRef();
-            System.out.println("Transaction deleted successfully.");
             return;
         }
 
