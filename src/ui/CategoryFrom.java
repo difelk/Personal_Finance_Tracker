@@ -69,8 +69,11 @@ import java.util.Scanner;
 
         if (validateCategory(newCategory)) {
             categoryLinkedList.addCategory(newCategory);
+
             System.out.println();
-            System.out.println("Category added successfully.");
+            System.out.println("\u001B[34m=============================================================================================\u001B[0m");
+            System.out.println("\u001B[34mCategory added successfully.\u001B[0m");
+            System.out.println("\u001B[34m=============================================================================================\u001B[0m");
             System.out.println();
 
             System.out.println("            Entered Category Details:");
@@ -146,7 +149,12 @@ import java.util.Scanner;
 
          categoryLinkedList.updateCategoryByName(categoryName, updatedCategory);
 
+
+
+         System.out.println();
+         System.out.println("\u001B[34m=============================================================================================\u001B[0m");
          System.out.println("\u001B[34mCategory updated successfully.\u001B[0m");
+         System.out.println("\u001B[34m=============================================================================================\u001B[0m");
          System.out.println();
      }
 
@@ -295,7 +303,11 @@ import java.util.Scanner;
 
          categoryLinkedList.updateCategoryByName(existingCategory.getName(), updatedCategory);
 
+
+         System.out.println();
+         System.out.println("\u001B[34m=============================================================================================\u001B[0m");
          System.out.println("\u001B[34mCategory updated successfully.\u001B[0m");
+         System.out.println("\u001B[34m=============================================================================================\u001B[0m");
          System.out.println();
      }
 

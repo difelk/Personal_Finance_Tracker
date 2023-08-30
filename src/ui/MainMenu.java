@@ -2,6 +2,7 @@ package ui;
 
 import Category.CategoryLinkedList;
 import transaction.TransactionLinkedList;
+import utils.ValidationUtils;
 
 import java.util.Scanner;
 
@@ -11,7 +12,11 @@ public class MainMenu {
     private boolean isMenuOpen = true;
     private final TransactionLinkedList transactionLinkedList = new TransactionLinkedList();
     private final CategoryLinkedList categoryLinkedList = new CategoryLinkedList();
+
+    private final ValidationUtils validationUtils = new ValidationUtils();
     private final Scanner scanner = new Scanner(System.in);
+
+
 
     public void displayMenu() {
         CategoryForm categoryForm = new CategoryForm(categoryLinkedList);
@@ -60,6 +65,7 @@ public class MainMenu {
             System.out.println();
             System.out.print("Enter selected option number: ");
             String input = scanner.nextLine();
+
 
             if (!input.matches("\\d+")) {
                 System.out.println();
@@ -111,7 +117,7 @@ public class MainMenu {
                 String input = scanner.nextLine();
                 System.out.println();
 
-                if (!input.matches("\\d+")) {
+                if (!validationUtils.isITANumber(input)) {
                     System.out.println();
                     System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
                     System.out.println();
