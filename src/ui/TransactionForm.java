@@ -14,6 +14,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class TransactionForm {
 
@@ -285,16 +286,15 @@ public class TransactionForm {
         System.out.print("Enter New Amount:");
 
         double updatedAmount = getUpdateAmountFromUser(existingTransaction.getAmount());
-//        double updatedAmount = getAmountFromUser();
 
         System.out.print("New Description: ");
         String updatedDescription = scanner.nextLine().trim();
+
         if (updatedDescription.isEmpty()) {
             updatedDescription = existingTransaction.getDescription();
         }
         System.out.print("Enter Category:");
         Category updatedCategory = getCategoryFromUserInput();
-//        Category updatedCategory = getCategoryFromUser();
 
 
         if(updatedCategory == null){
@@ -308,17 +308,19 @@ public class TransactionForm {
 
         boolean updatedIsIncome = isIncomeTransaction();
 
+        boolean isItOldCategory = existingTransaction.getCategory().equals(categoryName);
+        boolean isItOldIsIncome = existingTransaction.isIncome() == updatedIsIncome;
+        boolean isItSameAmount = existingTransaction.getAmount() == updatedAmount;
 
-        if (!updatedIsIncome) {
-            if (checkTransactionAmountExceedThanCategory(updatedCategory, updatedAmount, updatedIsIncome)) {
+        if (!isItSameAmount || !isItOldCategory || !isItOldIsIncome) {
+            updateCategoryBudget(existingTransaction, updatedCategory, updatedAmount, updatedIsIncome);
+
+            if (!updatedIsIncome && checkTransactionAmountExceedThanCategory(updatedCategory, updatedAmount, updatedIsIncome)) {
                 System.out.println("Error: Amount exceeds allocated budget for the selected category.");
                 return;
-            } else {
-                updateCategoryIncAndExp(updatedCategory, updatedAmount, updatedIsIncome);
             }
-        } else {
-            updateCategoryIncAndExp(updatedCategory, updatedAmount, updatedIsIncome);
         }
+
 
 
         Transaction newTransaction = new Transaction(updatedAmount, updatedDescription, updatedCategory, updatedDateTime, updatedIsIncome);
@@ -331,29 +333,6 @@ public class TransactionForm {
         displayPreviousTransactions();
         System.out.println();
 
-
-//        if(checkTransactionAmountExceedThanCategory(updatedCategory, updatedAmount, updatedIsIncome)){
-//            System.out.println();
-//            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
-//            System.out.println("\u001B[31mYou entered an amount exceeding the allocated budget for the " + updatedCategory.getName() + " category.\u001B[0m");
-//            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
-//            System.out.println();
-//            return;
-//        }
-//
-//        if(updatedCategory != null){
-//            updateCategoryIncAndExp(updatedCategory, updatedAmount,updatedIsIncome);
-//        }
-//
-//        Transaction updatedTransaction = new Transaction(updatedAmount, updatedDescription, updatedCategory, updatedDateTime, updatedIsIncome);
-//
-//        transactionLinkedList.updateTransactionById(existingTransaction.getTransactionID(), updatedTransaction);
-//
-//        System.out.println();
-//        System.out.println("\u001B[34m=============================================================================================\u001B[0m");
-//        System.out.println("\u001B[34mTransaction updated successfully.\u001B[0m");
-//        System.out.println("\u001B[34m=============================================================================================\u001B[0m");
-//        System.out.println();
     }
 
     public void getAllTransaction(TransactionLinkedList transactionLinkedList){
@@ -424,6 +403,76 @@ public class TransactionForm {
             System.out.println(e);
         }
     }
+
+    public void getTransactionsIncExpByDate(String type){
+        boolean isItAnIncome = type.equals("Incomes");
+            System.out.printf("Enter date (yyyy-MM-dd) to get %s: ", type);
+            String transactionDateStr = scanner.nextLine();
+
+            System.out.println();
+
+            LocalDate transactionDate;
+            try {
+                transactionDate = LocalDate.parse(transactionDateStr);
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+                return;
+            }
+
+            LocalDateTime startOfDay = transactionDate.atStartOfDay();
+            List<TransactionNode> matchingTransactions = transactionLinkedList.getTransactionsByDate(startOfDay.toLocalDate());
+            matchingTransactions =   matchingTransactions.stream().filter(node -> node.getData().isIncome() == isItAnIncome).collect(Collectors.toList());
+
+            displayAllTransactionDetailsToDelete(matchingTransactions);
+            if (matchingTransactions.isEmpty()) {
+                System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+                System.out.println("\u001B[31mNo transactions found with the given date.\u001B[0m");
+                System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+                System.out.println();
+                return;
+            }
+    }
+
+    public void getTransactionsIncExpByDateRange(String type){
+        boolean isItAnIncome = type.equals("Incomes");
+
+        System.out.print("Enter START date (yyyy-MM-dd) for the date range: ");
+        String startDateStr = scanner.nextLine();
+
+        System.out.print("Enter END date (yyyy-MM-dd) for the date range: ");
+        String endDateStr = scanner.nextLine();
+
+        LocalDate startDate, endDate;
+
+        try {
+            startDate = LocalDate.parse(startDateStr);
+            endDate = LocalDate.parse(endDateStr);
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+            return;
+        }
+
+        if (startDate.isAfter(endDate)) {
+            System.out.println("Start date must be before the end date.");
+            return;
+        }
+
+        LocalDateTime startDateInLocalDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateInLocalDateTime = endDate.atStartOfDay();
+        List<TransactionNode> transactionsInRange = transactionLinkedList.getTransactionsByDateRange(startDateInLocalDateTime, endDateInLocalDateTime);
+        transactionsInRange =   transactionsInRange.stream().filter(node -> node.getData().isIncome() == isItAnIncome).collect(Collectors.toList());
+
+        displayAllTransactionDetailsToDelete(transactionsInRange);
+        if (transactionsInRange.isEmpty()) {
+            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+            System.out.println("\u001B[31mNo transactions found with the given date.\u001B[0m");
+            System.out.println("\u001B[31m*******************************************************************************************************\u001B[0m");
+            System.out.println();
+            return;
+        }
+
+    }
+
 
     public void deleteTransactionById() {
         System.out.print("Enter Transaction ID to delete: ");
@@ -649,7 +698,6 @@ public class TransactionForm {
 
     private boolean confirmDeletion(Transaction transaction) {
         Scanner scanner = new Scanner(System.in);
-//        displayTransactionDetails(transaction);
         System.out.print("Are you sure you want to delete this transaction? (yes/no): ");
         String userInput = scanner.nextLine().trim().toLowerCase();
         return userInput.equals("yes") || userInput.equals("y");
@@ -657,7 +705,6 @@ public class TransactionForm {
 
 
     public void displayTransactionDetails(Transaction transaction){
-//        System.out.println("Transaction Details to Delete:");
         System.out.println("Amount: " + transaction.getAmount());
         System.out.println("Description: " + transaction.getDescription());
         System.out.println("Category: " + transaction.getCategory());
@@ -854,6 +901,35 @@ public class TransactionForm {
         }
         return  false;
     }
+
+
+
+    private void updateCategoryBudget(Transaction existingTransaction, Category updatedCategory, double updatedAmount, boolean updatedIsIncome) {
+        String oldCategoryName = existingTransaction.getCategory();
+
+        // Calculate the change in amount
+        double amountChange = updatedAmount - existingTransaction.getAmount();
+
+        // Update the old category's budget (subtract the old amount if it was an income, add if it was an expense)
+        double oldCategoryBudgetChange = existingTransaction.isIncome() ? -existingTransaction.getAmount() : existingTransaction.getAmount();
+        categoryLinkedList.getCategoryByName(oldCategoryName).getData().setBudget(
+                categoryLinkedList.getCategoryByName(oldCategoryName).getData().getBudget() + oldCategoryBudgetChange
+        );
+
+        // Update the new category's budget (add the updated amount if it's an income, subtract if it's an expense)
+        double newCategoryBudgetChange = updatedIsIncome ? updatedAmount : -updatedAmount;
+        categoryLinkedList.getCategoryByName(updatedCategory.getName()).getData().setBudget(
+                categoryLinkedList.getCategoryByName(updatedCategory.getName()).getData().getBudget() + newCategoryBudgetChange
+        );
+
+        // Check if the new category's budget exceeds the allocated budget for an expense
+        if (!updatedIsIncome && checkTransactionAmountExceedThanCategory(updatedCategory, updatedAmount, updatedIsIncome)) {
+            System.out.println("1Error: Amount exceeds allocated budget for the selected category.");
+            return;
+        }
+    }
+
+
 
     public void updateCategoryIncAndExp(Category cat, double amount, boolean isIncome){
         if(isIncome){
