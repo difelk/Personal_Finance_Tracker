@@ -48,13 +48,8 @@ public class ValidationUtils {
         }
     }
 
-    public boolean isITANumber(String value){
-        try{
-            double numberValue = Double.parseDouble(value);
-            return true;
-        }catch (Exception e){
-            return false;
-        }
+    public static boolean isITANumber(String value){
+       return value.matches("\\d+");
     }
 
     public boolean isItAValidDate(String date) {

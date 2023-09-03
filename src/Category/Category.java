@@ -12,7 +12,6 @@ public class Category {
     private String description;
     private LocalDateTime creationDate;
     private String categoryID;
-    //    private List<Transaction> associatedTransactions; // List of   transactions related to this category
 
     public Category(String categoryName, String description){
         this.categoryName = categoryName;
@@ -20,16 +19,22 @@ public class Category {
         this.creationDate = LocalDateTime.now();
         this.categoryID = generateCategoryID(categoryName, creationDate);
 
-//        System.out.println("ID: " + categoryID);
-//        System.out.println("Name: " + categoryName);
-//        System.out.println("Description: " + description);
-//        System.out.println("Date: " + creationDate);
     }
     public Category(double budget){
         this.budget = budget;
     }
+
+    public Category(String categoryName, String description, double budgetValue, LocalDateTime fullDateTime) {
+        this.categoryName = categoryName.toLowerCase().trim();
+        this.description = description;
+        this.budget = budgetValue;
+        this.creationDate = fullDateTime;
+        this.categoryID = generateCategoryID(categoryName, creationDate);
+
+    }
+
     public void setName(String name){
-        this.categoryName = name;
+        this.categoryName = name.toLowerCase().trim();
     }
     public String getName(){
         return this.categoryName;
@@ -60,7 +65,6 @@ public class Category {
         ValidationUtils validationUtils = new ValidationUtils();
         String formattedDatetime;
 
-        // Creating Category ID combining today's date n time
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
             formattedDatetime = datetime.format(formatter);
@@ -69,14 +73,6 @@ public class Category {
             throw new IllegalArgumentException("Invalid date and time format.");
         }
 
-//        if (!formattedDatetime.toLocalTime().equals(LocalTime.of(0, 0))) {
-//            formattedDatetime = formattedDatetime.with(LocalTime.MIN);
-//        }
-
-//        if (validationUtils.isDateAFutureDate(formattedDatetime)) {
-//            throw new IllegalArgumentException("Creation date cannot be in the future.");
-//        }
-
-        return categoryName + "_" + formattedDatetime;
+        return categoryName + "" + formattedDatetime.replace(":", "").replace("-", "");
     }
 }

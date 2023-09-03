@@ -2,6 +2,7 @@ package transaction;
 
 import utils.DataManipulationUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoLocalDateTime;
@@ -37,6 +38,22 @@ public class TransactionLinkedList {
         return null;
     }
 
+    public void updateTransactionById(String transactionId, Transaction updatedTransaction) {
+        TransactionNode currentNode = head;
+        while (currentNode != null) {
+            if (currentNode.getData().getTransactionID().equals(transactionId)) {
+                currentNode.getData().setAmount(updatedTransaction.getAmount());
+                currentNode.getData().setDescription(updatedTransaction.getDescription());
+                currentNode.getData().setCategory(updatedTransaction.getCategory());
+                currentNode.getData().setDateTime(updatedTransaction.getDateTime());
+                currentNode.getData().setIncome(updatedTransaction.isIncome());
+                return;
+            }
+            currentNode = currentNode.getNextRef();
+        }
+    }
+
+
     public List<TransactionNode> getTransactionByDate(String dateTime, String formate){
         if (isEmpty()){
             return null;
@@ -54,6 +71,45 @@ public class TransactionLinkedList {
         }
     }
 
+    public List<TransactionNode> getTransactionsByDate(LocalDate date) {
+        if (isEmpty()) {
+            return null;
+        } else {
+            List<TransactionNode> transactionNodes = new ArrayList<>();
+            TransactionNode tempNode = this.head;
+
+            LocalDateTime startOfDay = date.atStartOfDay();
+            LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
+
+            while (tempNode != null) {
+                LocalDateTime transactionDateTime = tempNode.getData().getDateTime();
+                if (transactionDateTime.isAfter(startOfDay) && transactionDateTime.isBefore(endOfDay)) {
+                    transactionNodes.add(tempNode);
+                }
+                tempNode = tempNode.getNextRef();
+            }
+
+            return transactionNodes;
+        }
+    }
+    public List<TransactionNode> getTransactionsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        if (isEmpty()) {
+            return null;
+        } else {
+            List<TransactionNode> transactionNodes = new ArrayList<>();
+            TransactionNode tempNode = this.head;
+
+            while (tempNode != null) {
+                LocalDateTime transactionDateTime = tempNode.getData().getDateTime();
+                if (!transactionDateTime.isBefore(startDate) && !transactionDateTime.isAfter(endDate)) {
+                    transactionNodes.add(tempNode);
+                }
+                tempNode = tempNode.getNextRef();
+            }
+
+            return transactionNodes;
+        }
+    }
 
     public List<TransactionNode> getTransactionsByDateRange(String startDate, String endDate, String formatPattern) {
         if (isEmpty()) {
@@ -87,9 +143,49 @@ public class TransactionLinkedList {
             transactionNodes.add(tempNode);
             tempNode = tempNode.getNextRef();
         }
-
         return transactionNodes;
     }
+
+
+    public void deleteTransactionById(String transactionId) {
+        if (isEmpty()) {
+            System.out.println("No transactions to delete.");
+            return;
+        }
+
+        if (head.getData().getTransactionID().equals(transactionId)) {
+            head = head.getNextRef();
+            return;
+        }
+
+        TransactionNode currentNode = head;
+        TransactionNode prevNode = currentNode;
+
+        while (currentNode != null) {
+            if (currentNode.getData().getTransactionID().equals(transactionId)) {
+                prevNode.setNextRef(currentNode.getNextRef());
+                System.out.println("Transaction deleted successfully.");
+                return;
+            }
+            prevNode = currentNode;
+            currentNode = currentNode.getNextRef();
+        }
+
+        // Transaction not found with the given ID
+        System.out.println("Transaction not found with the given ID.");
+    }
+
+
+    public void deleteAllTransactions() {
+        if (isEmpty()) {
+            System.out.println("No transactions to delete.");
+            return;
+        }
+
+        head = null;
+        System.out.println("All transactions deleted successfully.");
+    }
+
 
     public boolean isEmpty(){
         return this.head == null;

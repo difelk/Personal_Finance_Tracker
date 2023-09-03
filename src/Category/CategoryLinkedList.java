@@ -68,10 +68,9 @@ public class CategoryLinkedList {
 
     public CategoryNode getCategoryByName(String categoryName) {
         CategoryNode currentNode = head;
-
         if(!isEmpty()){
             while (currentNode != null) {
-                if (currentNode.getData().getName().equals(categoryName)) {
+                if (currentNode.getData().getName().toLowerCase().trim().equals(categoryName.toLowerCase().trim())) {
                     return currentNode;
                 }
                 currentNode = currentNode.getNextRef();
@@ -123,6 +122,27 @@ public class CategoryLinkedList {
             return categoryNodes;
         }
         return null;
+    }
+
+
+    public void updateCategoryByName(String categoryName, Category updatedCategory) {
+        CategoryNode categoryNodeToUpdate = getCategoryByName(categoryName);
+
+        if (categoryNodeToUpdate != null) {
+            Category existingCategory = categoryNodeToUpdate.getData();
+
+            if (updatedCategory.getBudget() >= 0) {
+                existingCategory.setBudget(updatedCategory.getBudget());
+            }
+            if (updatedCategory.getDescription() != null) {
+                existingCategory.setDescription(updatedCategory.getDescription());
+            }
+
+            if (!existingCategory.getName().equalsIgnoreCase(updatedCategory.getName()) &&
+                    !isCategoryExists(updatedCategory.getName())) {
+                existingCategory.setName(updatedCategory.getName());
+            }
+        }
     }
 
 

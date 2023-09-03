@@ -14,7 +14,7 @@ public class DataManipulationUtils {
         return parsedDate.atStartOfDay();
     }
 
-    public LocalDateTime convertStringToTime(String time) {
+    public static LocalDateTime convertStringToTime(String time) {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         LocalTime parsedTime = LocalTime.parse(time, timeFormatter);
         return parsedTime.atDate(LocalDate.now());
@@ -32,10 +32,13 @@ public class DataManipulationUtils {
         }
     }
 
-    public LocalDateTime ConvertDateStringToLocalDateTime(String dateTimeString) {
+    public static LocalDateTime ConvertDateStringToLocalDateTime(String dateTimeString) {
+        System.out.println("dateTimeString - " + dateTimeString);
+        String date = dateTimeString.trim();
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            return LocalDateTime.parse(dateTimeString, formatter);
+            System.out.println("formatter - " + formatter);
+            return LocalDateTime.parse(date, formatter);
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Invalid date and time format.");
         }
