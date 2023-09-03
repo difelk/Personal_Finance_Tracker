@@ -44,7 +44,7 @@ import java.util.Scanner;
 
         Transaction transaction1 = new Transaction(5000, "Once a month grocery", categoryLinkedListMain.getCategoryByName("Groceries").getData(),false);
         Transaction transaction2 = new Transaction(5000, "Watched a Movie", categoryLinkedListMain.getCategoryByName("Entertainment").getData(), false);
-        Transaction transaction3 = new Transaction(500, "Transportation expenses for office", categoryLinkedListMain.getCategoryByName("Transportation").getData(), false);
+        Transaction transaction3 = new Transaction(500, "Office transport", categoryLinkedListMain.getCategoryByName("Transportation").getData(), false);
 
         TransactionLinkedlistHC.addTransaction(transaction1);
          TransactionLinkedlistHC.addTransaction(transaction2);

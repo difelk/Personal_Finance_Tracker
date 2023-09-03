@@ -39,7 +39,8 @@ public class MainMenu {
             System.out.println("\u001B[32m05. UPDATE CATEGORY\u001B[0m");
 //            System.out.println("\u001B[32m06. DELETE CATEGORY\u001B[0m");
             System.out.println("\u001B[34m06. SEARCH\u001B[0m");
-            System.out.println("\u001B[34m07. ABOUT\u001B[0m");
+            System.out.println("\u001B[34m07. SUMMARY\u001B[0m");
+            System.out.println("\u001B[34m08. ABOUT\u001B[0m");
             System.out.println("\u001B[31m99. EXIT\u001B[0m");
             System.out.println();
             System.out.println("===========================================================================================");
@@ -54,7 +55,8 @@ public class MainMenu {
                 case 5 -> updateCategory();
 //                case 6 -> deleteCategory();
                 case 6 -> search();
-                case 7 -> about();
+                case 7 -> summary();
+                case 8 -> about();
                 case 99 -> isMenuOpen = false;
                 default -> handleInvalidOperation();
             }
@@ -406,6 +408,18 @@ public class MainMenu {
                 System.out.println();
             }
         } while (updateOption != 5);
+    }
+
+    public void summary(){
+        System.out.println("\u001B[34m                                    SUMMARY                            \u001B[0m");
+        System.out.println();
+        System.out.println();
+
+        TransactionForm transactionForm = new TransactionForm(categoryLinkedList, transactionLinkedList);
+
+        transactionForm.getSummary();
+
+
     }
 
     private void about() {
