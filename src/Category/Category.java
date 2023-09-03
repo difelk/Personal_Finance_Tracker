@@ -12,7 +12,6 @@ public class Category {
     private String description;
     private LocalDateTime creationDate;
     private String categoryID;
-    //    private List<Transaction> associatedTransactions; // List of   transactions related to this category
 
     public Category(String categoryName, String description){
         this.categoryName = categoryName;

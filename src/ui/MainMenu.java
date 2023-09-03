@@ -4,6 +4,7 @@ import Category.CategoryLinkedList;
 import transaction.TransactionLinkedList;
 import utils.ValidationUtils;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 public class MainMenu {
@@ -38,7 +39,8 @@ public class MainMenu {
             System.out.println("\u001B[32m05. UPDATE CATEGORY\u001B[0m");
 //            System.out.println("\u001B[32m06. DELETE CATEGORY\u001B[0m");
             System.out.println("\u001B[34m06. SEARCH\u001B[0m");
-            System.out.println("\u001B[34m07. HELP\u001B[0m");
+            System.out.println("\u001B[34m07. SUMMARY\u001B[0m");
+            System.out.println("\u001B[34m08. ABOUT\u001B[0m");
             System.out.println("\u001B[31m99. EXIT\u001B[0m");
             System.out.println();
             System.out.println("===========================================================================================");
@@ -53,9 +55,10 @@ public class MainMenu {
                 case 5 -> updateCategory();
 //                case 6 -> deleteCategory();
                 case 6 -> search();
-                case 7 -> help();
+                case 7 -> summary();
+                case 8 -> about();
                 case 99 -> isMenuOpen = false;
-                default -> isMenuOpen = true;
+                default -> handleInvalidOperation();
             }
         } while (isMenuOpen);
     }
@@ -84,6 +87,12 @@ public class MainMenu {
             scanner.nextLine();
             isMenuOpen = true;
         }
+    }
+
+
+    public void handleInvalidOperation(){
+        System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+        isMenuOpen = true;
     }
 
     private void addTransaction() {
@@ -289,65 +298,6 @@ public class MainMenu {
         } while (updateOption != 5);
     }
 
-//    private void deleteCategory() {
-//        System.out.println("\u001B[32m                                    DELETE CATEGORY                          \u001B[0m");
-//        System.out.println();
-//        int deleteOption = -1;
-//
-//        do {
-//            try {
-//                System.out.println();
-//                System.out.println("Select a delete option for categories:");
-//                System.out.println();
-//                System.out.println("1. Search categories by ID");
-//                System.out.println("2. Search categories by date");
-//                System.out.println("3. Search categories by date range");
-//                System.out.println("4. Get all categories");
-//                System.out.println("\u001B[34m5. Back to main menu\u001B[0m");
-//                System.out.println();
-//                System.out.print("Enter your choice: ");
-//
-//
-//                String input = scanner.nextLine();
-//                System.out.println();
-//
-//                if (!ValidationUtils.isITANumber(input)) {
-//                    System.out.println();
-//                    System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
-//                    System.out.println();
-//                    continue;
-//                }
-//
-//                deleteOption = Integer.parseInt(input);
-//
-//                switch (deleteOption) {
-//                    case 1:
-//
-//                        break;
-//                    case 2:
-//
-//                        break;
-//                    case 3:
-//
-//                        break;
-//                    case 4:
-//
-//                        break;
-//                    case 5:
-//                        System.out.println("                                      \u001BReturning to main menu...\u001B[0m");
-//                        break;
-//                    default:
-//                        System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
-//                }
-//            } catch (NumberFormatException e) {
-//                System.out.println();
-//                System.out.println("Invalid input. Please enter a valid option number.");
-//                System.out.println();
-//                deleteOption = -1;
-//            }
-//        } while (deleteOption != 5);
-//    }
-
 
     private void search() {
         TransactionForm transactionForm = new TransactionForm(categoryLinkedList, transactionLinkedList);
@@ -364,6 +314,9 @@ public class MainMenu {
             System.out.println();
             System.out.println("\u001B[35m1. Search transactions\u001B[0m");
             System.out.println("\u001B[35m2. Search categories\u001B[0m");
+            System.out.println();
+            System.out.println("\u001B[35m3. Search Incomes\u001B[0m");
+            System.out.println("\u001B[35m4. Search Expenses\u001B[0m");
             System.out.println("\u001B[34m5. Back to main menu\u001B[0m");
             System.out.println();
             System.out.print("Enter your choice: ");
@@ -378,30 +331,117 @@ public class MainMenu {
             }
 
             searchOption = Integer.parseInt(input);
-            
+
 
             switch (searchOption) {
-                case 1:
-                    transactionForm.getAllTransaction(transactionLinkedList);
-                    break;
-                case 2:
-                    categoryForm.getAllCategories(categoryLinkedList);
-                    break;
-                case 5:
+                case 1 -> transactionForm.getAllTransaction(transactionLinkedList);
+                case 2 -> categoryForm.getAllCategories(categoryLinkedList);
+                case 3 -> searchIncomeExpenses("Incomes");
+                case 4 -> searchIncomeExpenses("Expenses");
+                case 5 -> {
                     System.out.println();
                     System.out.println("                                      \u001BReturning to main menu...\u001B[0m");
                     System.out.println();
-                    break;
-                default:
-                    System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                }
+                default -> System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
             }
         } while (searchOption != 5);
     }
 
-    private void help() {
+
+
+
+    private void searchIncomeExpenses(String type) {
+        TransactionForm transactionForm = new TransactionForm(categoryLinkedList, transactionLinkedList);
+        System.out.printf("\u001B[32m                                    UPDATE %s                          \u001B[0m%n", type.toUpperCase());
+        System.out.println();
+        int updateOption = -1;
+
+        do {
+            try {
+                System.out.println();
+                System.out.printf("Select a Search option for get %s:",type);
+                System.out.println();
+                System.out.printf("1. Search %s by date",type);
+                System.out.println();
+                System.out.printf("2. Search %s by date range",type);
+                System.out.println();
+                System.out.println("\u001B[34m5. Back to main menu\u001B[0m");
+                System.out.println();
+                System.out.print("Enter your choice: ");
+
+
+                String input = scanner.nextLine();
+                System.out.println();
+
+                if (!input.matches("\\d+")) {
+                    System.out.println();
+                    System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                    System.out.println();
+                    continue;
+                }
+
+                updateOption = Integer.parseInt(input);
+                CategoryForm categoryFrom = new CategoryForm(categoryLinkedList);
+                switch (updateOption) {
+                    case 1:
+
+                        transactionForm.getTransactionsIncExpByDate(type);
+                        break;
+                    case 2:
+                        transactionForm.getTransactionsIncExpByDateRange(type);
+                        break;
+                    case 5:
+                        System.out.println();
+                        System.out.println("                                      \u001BReturning to main menu...\u001B[0m");
+                        System.out.println();
+                        break;
+                    default:
+                        System.out.println();
+                        System.out.println("\u001B[31mInvalid option. Please enter a valid option number.\u001B[0m");
+                        System.out.println();
+                }
+            } catch (NumberFormatException e) {
+                System.out.println();
+                System.out.print("Invalid input. Please enter a valid option number. ");
+                updateOption = -1;
+                System.out.println();
+            }
+        } while (updateOption != 5);
+    }
+
+    public void summary(){
+        System.out.println("\u001B[34m                                    SUMMARY                            \u001B[0m");
+        System.out.println();
+        System.out.println();
+
+        TransactionForm transactionForm = new TransactionForm(categoryLinkedList, transactionLinkedList);
+
+        transactionForm.getSummary();
+
+
+    }
+
+    private void about() {
         System.out.println("\u001B[34m                                    HELP TRANSACTION                            \u001B[0m");
         System.out.println();
-        System.out.println("Inside the help");
+        System.out.println();
+        System.out.println("\u001B[34m                                     INTODUCTION                         \u001B[0m");
+
+        System.out.println();
+        System.out.println("\u001B[30m                            -- Personal Finance Tracker --                      \u001B[0m");
+
+        System.out.println("Personal Finance Tracker is a project developed by Dilshan Fernando (COHNDSE231P-003) " +
+                "\n" +
+                "and Ilmee De Silva (COHNDSE231P-005) for a campus project focusing on Programming Data  " +
+                "\n" +
+                "Structures and Algorithms. The data structure used is a Linkedlist, and the university " +
+                "\n" +
+                "is NIBM Colombo.\n" +
+                "\n" +
+                "The project aims to help users to track their personal finances by providing a simple and " +
+                "\n" +
+                "easy-to-use interface for recording income, expenses, and setting budgets.");
     }
 
 }

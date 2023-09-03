@@ -26,9 +26,9 @@ import java.util.Scanner;
 
          LocalDateTime creationDateTime = LocalDateTime.now();
 
-         Category category1 = new Category("Groceries", "Grocery expenses", 20000, creationDateTime);
-         Category category2 = new Category("Entertainment", "Entertainment expenses", 10000, creationDateTime);
-         Category category3 = new Category("Transportation", "Transportation expenses", 15000, creationDateTime);
+         Category category1 = new Category("Groceries", "Grocery expenses", 15000, creationDateTime);
+         Category category2 = new Category("Entertainment", "Entertainment expenses", 5000, creationDateTime);
+         Category category3 = new Category("Transportation", "Transportation expenses", 14500, creationDateTime);
 
          if (!categoryLinkedListMain.isCategoryExists(category1.getName())) {
              categoryLinkedListMain.addCategory(category1);
@@ -43,8 +43,8 @@ import java.util.Scanner;
          }
 
         Transaction transaction1 = new Transaction(5000, "Once a month grocery", categoryLinkedListMain.getCategoryByName("Groceries").getData(),false);
-        Transaction transaction2 = new Transaction(8500, "Watched a Movie", categoryLinkedListMain.getCategoryByName("Entertainment").getData(), false);
-        Transaction transaction3 = new Transaction(550, "Transportation expenses for office", categoryLinkedListMain.getCategoryByName("Transportation").getData(), false);
+        Transaction transaction2 = new Transaction(5000, "Watched a Movie", categoryLinkedListMain.getCategoryByName("Entertainment").getData(), false);
+        Transaction transaction3 = new Transaction(500, "Office transport", categoryLinkedListMain.getCategoryByName("Transportation").getData(), false);
 
         TransactionLinkedlistHC.addTransaction(transaction1);
          TransactionLinkedlistHC.addTransaction(transaction2);
