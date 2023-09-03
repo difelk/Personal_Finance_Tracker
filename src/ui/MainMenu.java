@@ -408,21 +408,6 @@ public class MainMenu {
         } while (updateOption != 5);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     private void about() {
         System.out.println("\u001B[34m                                    HELP TRANSACTION                            \u001B[0m");
         System.out.println();

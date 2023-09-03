@@ -2,6 +2,7 @@
 package ui;
 
 import Category.Category;
+import Category.CategoryNode;
 import Category.CategoryLinkedList;
 import transaction.Transaction;
 import transaction.TransactionLinkedList;
@@ -684,6 +685,13 @@ public class TransactionForm {
 
             if (confirmDeletion(SelectedNode.get(selectedNo-1).getData())) {
                 transactionLinkedList.deleteTransactionById(SelectedNode.get(selectedNo-1).getData().getTransactionID());
+
+                if(SelectedNode.get(selectedNo-1).getData().isIncome()){
+                    removeAmountFromBudget(categoryLinkedList.getCategoryByName(SelectedNode.get(selectedNo-1).getData().getCategory()) , SelectedNode.get(selectedNo-1).getData().getAmount());
+                }else{
+                    addAmountToBudget(categoryLinkedList.getCategoryByName(SelectedNode.get(selectedNo-1).getData().getCategory()) , SelectedNode.get(selectedNo-1).getData().getAmount());
+                }
+
                 System.out.println();
                 System.out.println("\u001B[34m=============================================================================================\u001B[0m");
                 System.out.println("\u001B[34mTransaction deleted successfully.\u001B[0m");
@@ -695,6 +703,7 @@ public class TransactionForm {
         }
 
     }
+
 
     private boolean confirmDeletion(Transaction transaction) {
         Scanner scanner = new Scanner(System.in);
@@ -929,6 +938,15 @@ public class TransactionForm {
         }
     }
 
+
+
+    public void removeAmountFromBudget(CategoryNode catLink, double amount){
+        catLink.getData().setBudget(catLink.getData().getBudget() - amount);
+    }
+
+    public void addAmountToBudget(CategoryNode catLink, double amount){
+        catLink.getData().setBudget(catLink.getData().getBudget() + amount);
+    }
 
 
     public void updateCategoryIncAndExp(Category cat, double amount, boolean isIncome){
